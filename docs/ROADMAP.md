@@ -68,7 +68,7 @@ split-bill은 인원이 많거나 지출 항목이 복잡해 정산 계산이 �
 
 > 실제 기능 구현 전에 **라우트·타입·상태 골격**을 먼저 완성해 전체 앱 플로우를 즉시 체험 가능하게 만드는 단계. 서버/DB 관련 작업은 존재하지 않음.
 
-- **Task 001: 개발 환경 및 프로젝트 스캐폴드 정리** - 우선순위
+- **Task 001: 개발 환경 및 프로젝트 스캐폴드 정리** ✅ - 우선순위
   - Vite 기본 템플릿 잔여물 제거 (`App.css`, `src/assets/react.svg`, `vite.svg`, 데모 카운터 코드)
   - 필수 의존성 설치: `react-router`, `zustand`, `react-hook-form`, `zod`, `@hookform/resolvers`, `lucide-react`, `html-to-image`
   - `vite.config.ts` + `tsconfig.app.json`에 `@/*` → `src/*` 경로 별칭 설정
