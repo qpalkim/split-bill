@@ -1,6 +1,7 @@
 import type { ChangeEvent } from 'react'
 import { Input } from '@/components/ui/input'
-import { formatCurrency, parseAmount } from '@/lib/format'
+import { cn } from '@/lib/utils'
+import { formatNumber, parseAmount } from '@/lib/format'
 
 interface CurrencyInputProps {
   /** 현재 금액(원 단위 숫자) */
@@ -19,14 +20,21 @@ function CurrencyInput({ value, onValueChange, id, placeholder, className }: Cur
   }
 
   return (
-    <Input
-      id={id}
-      inputMode="numeric"
-      placeholder={placeholder}
-      className={className}
-      value={value === 0 ? '' : formatCurrency(value)}
-      onChange={handleChange}
-    />
+    <div className="relative">
+      <Input
+        id={id}
+        inputMode="numeric"
+        placeholder={placeholder}
+        className={cn('pr-8', className)}
+        value={value === 0 ? '' : formatNumber(value)}
+        onChange={handleChange}
+      />
+      {value !== 0 ? (
+        <span className="pointer-events-none absolute top-1/2 right-2.5 -translate-y-1/2 text-base text-muted-foreground md:text-sm">
+          원
+        </span>
+      ) : null}
+    </div>
   )
 }
 
