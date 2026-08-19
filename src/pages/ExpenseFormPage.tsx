@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { useNavigate, useParams } from 'react-router'
+import type { FieldErrors } from 'react-hook-form'
 import { toast } from 'sonner'
 import BottomActionBar from '@/components/common/BottomActionBar'
 import CurrencyInput from '@/components/common/CurrencyInput'
@@ -18,7 +19,7 @@ import {
 import { useZodForm } from '@/hooks/useZodForm'
 import { formatCurrency } from '@/lib/format'
 import { calculateEqualShares } from '@/lib/split'
-import { expenseSchema } from '@/lib/validation/expenseSchema'
+import { expenseSchema, type ExpenseFormValues } from '@/lib/validation/expenseSchema'
 import { splitSchema } from '@/lib/validation/splitSchema'
 import { useSessionStore } from '@/store/useSessionStore'
 import type { SplitType } from '@/types'
@@ -69,8 +70,29 @@ function ExpenseFormPage() {
   )
   const [splitErrorMessage, setSplitErrorMessage] = useState<string | null>(null)
 
+  const titleFieldRef = useRef<HTMLDivElement>(null)
+  const amountFieldRef = useRef<HTMLDivElement>(null)
+  const payerFieldRef = useRef<HTMLDivElement>(null)
+  const splitSectionRef = useRef<HTMLDivElement>(null)
+
   const amount = form.watch('amount')
   const payerId = form.watch('payerId')
+
+  /** 검증 실패 시 우선순위(title→amount→payerId)에 따라 첫 오류 필드로 스크롤·포커스 이동 */
+  const scrollToFirstError = (errors: FieldErrors<ExpenseFormValues>) => {
+    if (errors.title) {
+      titleFieldRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      form.setFocus('title')
+      return
+    }
+    if (errors.amount) {
+      amountFieldRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      return
+    }
+    if (errors.payerId) {
+      payerFieldRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }
+  }
 
   /** 부담자 체크박스 선택/해제 */
   const toggleParticipant = (participantId: string) => {
@@ -87,7 +109,8 @@ function ExpenseFormPage() {
   )
   const customAmountDiff = amount - customAmountSum
 
-  const handleSave = form.handleSubmit((values) => {
+  /** 검증 통과 시 지출 항목을 저장 */
+  const handleValidSubmit = (values: ExpenseFormValues) => {
     const shares = selectedParticipantIds.map((participantId) => ({
       participantId,
       amount: splitType === 'custom' ? (customAmounts[participantId] ?? 0) : 0,
@@ -101,6 +124,7 @@ function ExpenseFormPage() {
 
     if (!splitResult.success) {
       setSplitErrorMessage(splitResult.error.issues[0]?.message ?? '배분 정보를 확인해주세요.')
+      splitSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
       return
     }
 
@@ -137,11 +161,16 @@ function ExpenseFormPage() {
 
     toast.success(isEditMode ? '지출 항목이 수정되었습니다.' : '지출 항목이 추가되었습니다.')
     navigate('/expenses')
-  })
+  }
+
+  /** 폼 제출 시점에만 handleSubmit을 호출해 렌더링 중 ref 접근을 피한다 */
+  const handleSave = (event: FormEvent<HTMLFormElement>) => {
+    void form.handleSubmit(handleValidSubmit, scrollToFirstError)(event)
+  }
 
   return (
     <form onSubmit={handleSave} className="flex flex-col gap-6 px-4 py-4 pb-28">
-      <div className="space-y-1.5">
+      <div ref={titleFieldRef} className="space-y-1.5">
         <Label htmlFor="title">항목명</Label>
         <Input
           id="title"
@@ -157,7 +186,7 @@ function ExpenseFormPage() {
         ) : null}
       </div>
 
-      <div className="space-y-1.5">
+      <div ref={amountFieldRef} className="space-y-1.5">
         <Label htmlFor="amount">금액</Label>
         <CurrencyInput
           id="amount"
@@ -170,7 +199,7 @@ function ExpenseFormPage() {
         ) : null}
       </div>
 
-      <div className="space-y-1.5">
+      <div ref={payerFieldRef} className="space-y-1.5">
         <Label htmlFor="payer">결제자</Label>
         <Select
           value={payerId === '' ? null : payerId}
@@ -216,7 +245,7 @@ function ExpenseFormPage() {
         </RadioGroup>
       </div>
 
-      <div className="space-y-2">
+      <div ref={splitSectionRef} className="space-y-2">
         <Label>부담자</Label>
         <ul className="flex flex-col gap-2">
           {participants.map((participant) => {

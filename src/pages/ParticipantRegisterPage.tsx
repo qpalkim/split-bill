@@ -1,6 +1,7 @@
-import { useState, type KeyboardEvent } from 'react'
+import { useRef, useState, type KeyboardEvent } from 'react'
 import { useNavigate } from 'react-router'
 import BottomActionBar from '@/components/common/BottomActionBar'
+import ConfirmDialog from '@/components/common/ConfirmDialog'
 import EmptyState from '@/components/common/EmptyState'
 import ParticipantChip from '@/components/common/ParticipantChip'
 import { Button } from '@/components/ui/button'
@@ -11,6 +12,7 @@ import { MIN_PARTICIPANTS_COUNT } from '@/constants/validation'
 import { participantSchema } from '@/lib/validation/participantSchema'
 import { isParticipantReferenced } from '@/store/selectors'
 import { useSessionStore } from '@/store/useSessionStore'
+import type { Participant } from '@/types'
 
 /** 참여자 등록 페이지(/) */
 function ParticipantRegisterPage() {
@@ -25,6 +27,10 @@ function ParticipantRegisterPage() {
 
   const [newParticipantName, setNewParticipantName] = useState('')
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [pendingDeleteParticipant, setPendingDeleteParticipant] = useState<Participant | null>(
+    null,
+  )
+  const participantNameInputRef = useRef<HTMLInputElement>(null)
 
   const isNextEnabled = participants.length >= MIN_PARTICIPANTS_COUNT
 
@@ -34,12 +40,21 @@ function ParticipantRegisterPage() {
 
     if (!result.success) {
       setErrorMessage(result.error.issues[0]?.message ?? '참여자 이름을 확인해주세요.')
+      participantNameInputRef.current?.focus()
       return
     }
 
     addParticipant(result.data.name)
     setNewParticipantName('')
     setErrorMessage(null)
+  }
+
+  /** 삭제 확인 다이얼로그에서 확인을 누르면 실제로 참여자를 제거 */
+  const handleConfirmDeleteParticipant = () => {
+    if (pendingDeleteParticipant) {
+      removeParticipant(pendingDeleteParticipant.id)
+    }
+    setPendingDeleteParticipant(null)
   }
 
   const handleNameInputKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
@@ -66,6 +81,7 @@ function ParticipantRegisterPage() {
         <div className="flex gap-2">
           <Input
             id="participant-name"
+            ref={participantNameInputRef}
             value={newParticipantName}
             onChange={(event) => setNewParticipantName(event.target.value)}
             onKeyDown={handleNameInputKeyDown}
@@ -104,7 +120,7 @@ function ParticipantRegisterPage() {
                   isRemovable
                   isDisabled={isReferenced}
                   disabledReason={isReferenced ? PARTICIPANT_REFERENCED_MESSAGE : undefined}
-                  onRemove={() => removeParticipant(participant.id)}
+                  onRemove={() => setPendingDeleteParticipant(participant)}
                 />
               </li>
             )
@@ -117,6 +133,19 @@ function ParticipantRegisterPage() {
           참여자를 {MIN_PARTICIPANTS_COUNT}명 이상 등록해야 다음 단계로 진행할 수 있어요.
         </p>
       ) : null}
+
+      <ConfirmDialog
+        isOpen={pendingDeleteParticipant !== null}
+        onOpenChange={(isOpen) => {
+          if (!isOpen) {
+            setPendingDeleteParticipant(null)
+          }
+        }}
+        title={`${pendingDeleteParticipant?.name ?? ''} 삭제`}
+        description="삭제하면 되돌릴 수 없어요. 이 참여자를 삭제할까요?"
+        confirmLabel="삭제"
+        onConfirm={handleConfirmDeleteParticipant}
+      />
 
       <BottomActionBar>
         <Button
