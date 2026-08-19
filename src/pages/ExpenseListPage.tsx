@@ -1,12 +1,11 @@
 import { Trash2 } from 'lucide-react'
 import { useState } from 'react'
-import { useNavigate } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 import AmountText from '@/components/common/AmountText'
 import BottomActionBar from '@/components/common/BottomActionBar'
 import EmptyState from '@/components/common/EmptyState'
 import ParticipantChip from '@/components/common/ParticipantChip'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
 import { ICON_SIZE_SM } from '@/constants/icon'
 import { dummyExpenses, dummyParticipants } from '@/mocks/dummy-session'
 import type { Expense } from '@/types'
@@ -47,34 +46,30 @@ function ExpenseListPage() {
         <ul className="flex flex-col gap-2">
           {expenses.map((expense) => (
             <li key={expense.id}>
-              <Card
-                className="cursor-pointer transition-colors hover:bg-muted/50"
-                onClick={() => navigate(`/expenses/${expense.id}`)}
-              >
-                <CardContent className="flex items-center justify-between gap-2">
-                  <div className="flex min-w-0 flex-col gap-0.5">
-                    <p className="truncate text-sm font-medium text-foreground">{expense.title}</p>
-                    <p className="text-xs text-muted-foreground">
-                      결제: {findPayerName(expense.payerId)}
-                    </p>
-                  </div>
-                  <div className="flex shrink-0 items-center gap-1">
-                    <AmountText amount={expense.amount} className="text-sm font-semibold" />
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon-sm"
-                      aria-label={`${expense.title} 삭제`}
-                      onClick={(event) => {
-                        event.stopPropagation()
-                        removeExpense(expense.id)
-                      }}
-                    >
-                      <Trash2 size={ICON_SIZE_SM} />
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
+              <div className="flex items-center gap-2 overflow-hidden rounded-xl bg-card ring-1 ring-foreground/10">
+                <Link
+                  to={`/expenses/${expense.id}`}
+                  className="flex min-w-0 flex-1 flex-col gap-0.5 px-4 py-4 outline-none transition-colors hover:bg-muted/50 focus-visible:bg-muted/50 focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:ring-inset"
+                >
+                  <p className="truncate text-sm font-medium text-foreground">{expense.title}</p>
+                  <p className="text-xs text-muted-foreground">
+                    결제: {findPayerName(expense.payerId)}
+                  </p>
+                </Link>
+                <div className="flex shrink-0 items-center gap-1 pr-3">
+                  <AmountText amount={expense.amount} className="text-sm font-semibold" />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="h-11 w-11"
+                    aria-label={`${expense.title} 삭제`}
+                    onClick={() => removeExpense(expense.id)}
+                  >
+                    <Trash2 size={ICON_SIZE_SM} />
+                  </Button>
+                </div>
+              </div>
             </li>
           ))}
         </ul>
@@ -85,14 +80,14 @@ function ExpenseListPage() {
           <Button
             type="button"
             variant="outline"
-            className="flex-1"
+            className="h-11 flex-1"
             onClick={() => navigate('/expenses/new')}
           >
             지출 추가
           </Button>
           <Button
             type="button"
-            className="flex-1"
+            className="h-11 flex-1"
             disabled={expenses.length === 0}
             onClick={() => navigate('/result')}
           >

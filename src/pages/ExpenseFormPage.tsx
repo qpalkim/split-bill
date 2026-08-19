@@ -160,11 +160,11 @@ function ExpenseFormPage() {
           onValueChange={(value) => setSplitType(value as SplitType)}
           className="grid-flow-col justify-start gap-4"
         >
-          <label className="flex items-center gap-2 text-sm">
+          <label className="flex min-h-11 items-center gap-2 text-sm">
             <RadioGroupItem value="equal" />
             균등 배분
           </label>
-          <label className="flex items-center gap-2 text-sm">
+          <label className="flex min-h-11 items-center gap-2 text-sm">
             <RadioGroupItem value="custom" />
             항목별 배분
           </label>
@@ -178,8 +178,8 @@ function ExpenseFormPage() {
             const isChecked = selectedParticipantIds.includes(participant.id)
 
             return (
-              <li key={participant.id} className="flex items-center justify-between gap-2">
-                <label className="flex items-center gap-2 text-sm">
+              <li key={participant.id} className="flex min-h-11 items-center justify-between gap-2">
+                <label className="flex min-h-11 items-center gap-2 text-sm">
                   <Checkbox
                     checked={isChecked}
                     onCheckedChange={() => toggleParticipant(participant.id)}
@@ -224,12 +224,12 @@ function ExpenseFormPage() {
           <Button
             type="button"
             variant="outline"
-            className="flex-1"
+            className="h-11 flex-1"
             onClick={() => navigate('/expenses')}
           >
             지출 내역으로 돌아가기
           </Button>
-          <Button type="submit" className="flex-1">
+          <Button type="submit" className="h-11 flex-1">
             저장
           </Button>
         </div>

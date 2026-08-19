@@ -36,10 +36,10 @@ function ResultPage() {
                 key={balance.participantId}
                 className="flex items-center justify-between gap-2 text-sm"
               >
-                <span className="font-medium text-foreground">
+                <span className="min-w-0 truncate font-medium text-foreground">
                   {findParticipantName(balance.participantId)}
                 </span>
-                <div className="flex flex-col items-end gap-0.5">
+                <div className="flex shrink-0 flex-col items-end gap-0.5">
                   <span className="text-xs text-muted-foreground">
                     결제 <AmountText amount={balance.paidAmount} /> · 부담{' '}
                     <AmountText amount={balance.owedAmount} />
@@ -67,10 +67,10 @@ function ResultPage() {
               <li key={`${settlement.fromId}-${settlement.toId}-${index}`}>
                 <Card>
                   <CardContent className="flex items-center justify-between gap-2 text-sm">
-                    <span className="text-foreground">
+                    <span className="min-w-0 truncate text-foreground">
                       {findParticipantName(settlement.fromId)} → {findParticipantName(settlement.toId)}
                     </span>
-                    <AmountText amount={settlement.amount} className="font-semibold" />
+                    <AmountText amount={settlement.amount} className="shrink-0 font-semibold" />
                   </CardContent>
                 </Card>
               </li>
@@ -86,10 +86,15 @@ function ResultPage() {
 
       <BottomActionBar>
         <div className="flex gap-2">
-          <Button type="button" variant="outline" className="flex-1" onClick={() => navigate('/expenses')}>
+          <Button
+            type="button"
+            variant="outline"
+            className="h-11 flex-1"
+            onClick={() => navigate('/expenses')}
+          >
             지출 내역으로 돌아가기
           </Button>
-          <Button type="button" className="flex-1" onClick={handleDownloadImage}>
+          <Button type="button" className="h-11 flex-1" onClick={handleDownloadImage}>
             이미지로 다운로드
           </Button>
         </div>

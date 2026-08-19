@@ -71,7 +71,7 @@ function ParticipantRegisterPage() {
             aria-invalid={errorMessage !== null}
             aria-describedby={errorMessage !== null ? 'participant-name-error' : undefined}
           />
-          <Button type="button" onClick={addParticipant}>
+          <Button type="button" className="h-11" onClick={addParticipant}>
             추가
           </Button>
         </div>
@@ -110,7 +110,7 @@ function ParticipantRegisterPage() {
       <BottomActionBar>
         <Button
           type="button"
-          className="w-full"
+          className="h-11 w-full"
           disabled={!isNextEnabled}
           onClick={() => navigate('/expenses')}
         >

@@ -23,7 +23,7 @@ function ParticipantChip({ name, isRemovable = false, onRemove, className }: Par
           type="button"
           onClick={onRemove}
           aria-label={`${name} 삭제`}
-          className="ml-0.5 rounded-full p-0.5 hover:bg-muted-foreground/20"
+          className="relative ml-0.5 rounded-full p-0.5 outline-none after:absolute after:-inset-3 hover:bg-muted-foreground/20 focus-visible:ring-3 focus-visible:ring-ring/50"
         >
           <X size={ICON_SIZE_SM} />
         </button>
