@@ -136,7 +136,7 @@ split-bill은 인원이 많거나 지출 항목이 복잡해 정산 계산이 �
   - 도메인 공통 컴포넌트도 shadcn/ui 프리미티브를 조합해 구성하고 커스텀 스타일링은 최소화
   - 컴포넌트 네이밍/props 규칙 정리 (PascalCase 컴포넌트, boolean은 `is`/`has` 접두사)
 
-- **Task 009: 폼 모듈 및 Zod 검증 스키마 작성**
+- **Task 009: 폼 모듈 및 Zod 검증 스키마 작성** ✅
   - React Hook Form + `zodResolver` 공통 셋업 및 폼 래퍼 훅 작성
   - `participantSchema`: 이름 필수·공백 불가·중복 이름 경고, 명단 최소 2명 검증
   - `expenseSchema`: 항목명 필수, 금액 양의 정수, 결제자 필수, 부담자 최소 1명 검증
