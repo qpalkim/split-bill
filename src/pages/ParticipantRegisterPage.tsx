@@ -67,6 +67,11 @@ function ParticipantRegisterPage() {
 
   return (
     <div className="flex flex-col gap-6 px-4 py-4 pb-28">
+      <p className="text-xs text-muted-foreground">
+        입력한 정보는 이 브라우저에만 저장돼요. 다른 기기·브라우저와는 공유되지 않으니, 정산이
+        끝나면 결과를 이미지로 저장해두세요.
+      </p>
+
       <div className="space-y-2.5">
         <Label htmlFor="session-name">모임 이름</Label>
         <Input
