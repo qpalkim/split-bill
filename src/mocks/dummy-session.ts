@@ -1,4 +1,11 @@
-import type { Expense, ExpenseShare, Participant, Session } from '@/types'
+import type {
+  Expense,
+  ExpenseShare,
+  Participant,
+  ParticipantBalance,
+  Session,
+  Settlement,
+} from '@/types'
 
 /** Task010 UI 시연에 사용할 더미 정산 세션(더치페이 모임) */
 export const dummySession: Session = {
@@ -102,4 +109,25 @@ export const dummyExpenseShares: ExpenseShare[] = [
   { id: 'mock-share-6-2', expenseId: 'mock-expense-6', participantId: 'mock-participant-2', amount: 10000 },
   { id: 'mock-share-6-3', expenseId: 'mock-expense-6', participantId: 'mock-participant-3', amount: 9000 },
   { id: 'mock-share-6-5', expenseId: 'mock-expense-6', participantId: 'mock-participant-5', amount: 8000 },
+]
+
+/**
+ * ResultPage UI 시연용 더미 정산 결과.
+ * dummyExpenses/dummyExpenseShares로부터 paidAmount(결제 합계)-owedAmount(부담 합계)=netBalance를
+ * 수기로 계산했다(실제 계산 엔진 lib/settlement.ts는 Phase3 Task017에서 구현 예정).
+ */
+export const dummyParticipantBalances: ParticipantBalance[] = [
+  { participantId: 'mock-participant-1', paidAmount: 72000, owedAmount: 40333, netBalance: 31667 },
+  { participantId: 'mock-participant-2', paidAmount: 10000, owedAmount: 56334, netBalance: -46334 },
+  { participantId: 'mock-participant-3', paidAmount: 32000, owedAmount: 49333, netBalance: -17333 },
+  { participantId: 'mock-participant-4', paidAmount: 100000, owedAmount: 41000, netBalance: 59000 },
+  { participantId: 'mock-participant-5', paidAmount: 18000, owedAmount: 45000, netBalance: -27000 },
+]
+
+/** 위 잔액을 채권자/채무자 그리디 매칭으로 정리한 최소 송금 내역(4건) */
+export const dummySettlements: Settlement[] = [
+  { fromId: 'mock-participant-2', toId: 'mock-participant-4', amount: 46334 },
+  { fromId: 'mock-participant-5', toId: 'mock-participant-1', amount: 27000 },
+  { fromId: 'mock-participant-3', toId: 'mock-participant-4', amount: 12666 },
+  { fromId: 'mock-participant-3', toId: 'mock-participant-1', amount: 4667 },
 ]
