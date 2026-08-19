@@ -101,7 +101,7 @@ split-bill은 인원이 많거나 지출 항목이 복잡해 정산 계산이 �
   - `src/constants/`에 검증 상수 정의 (최소 참여자 2명, 항목당 최소 부담자 1명, 최대 금액 등)
   - `any` 타입 사용 금지 원칙 및 타입 배럴 파일(`src/types/index.ts`) 구성
 
-- **Task 005: Zustand 스토어 골격 설계**
+- **Task 005: Zustand 스토어 골격 설계** ✅
   - `src/store/useSessionStore.ts` 생성 및 `persist` 미들웨어 골격 구성 (실제 연동은 Phase 3)
   - 스토어 상태 형태 확정: `session`, `participants`, `expenses`, `expenseShares`
   - 액션 시그니처만 선언: `createSession`, `addParticipant`, `removeParticipant`, `addExpense`, `updateExpense`, `removeExpense`, `resetSession`
