@@ -12,7 +12,7 @@ function NotFoundPage() {
         title="페이지를 찾을 수 없어요"
         description="주소를 다시 확인하거나 처음 화면으로 돌아가주세요."
         action={
-          <Button type="button" className="h-11" onClick={() => navigate('/')}>
+          <Button type="button" className="h-10" onClick={() => navigate('/')}>
             처음으로
           </Button>
         }

@@ -170,7 +170,7 @@ function ExpenseFormPage() {
 
   return (
     <form onSubmit={handleSave} className="flex flex-col gap-6 px-4 py-4 pb-28">
-      <div ref={titleFieldRef} className="space-y-1.5">
+      <div ref={titleFieldRef} className="space-y-2.5">
         <Label htmlFor="title">항목명</Label>
         <Input
           id="title"
@@ -186,7 +186,7 @@ function ExpenseFormPage() {
         ) : null}
       </div>
 
-      <div ref={amountFieldRef} className="space-y-1.5">
+      <div ref={amountFieldRef} className="space-y-2.5">
         <Label htmlFor="amount">금액</Label>
         <CurrencyInput
           id="amount"
@@ -199,7 +199,7 @@ function ExpenseFormPage() {
         ) : null}
       </div>
 
-      <div ref={payerFieldRef} className="space-y-1.5">
+      <div ref={payerFieldRef} className="space-y-2.5">
         <Label htmlFor="payer">결제자</Label>
         <Select
           value={payerId === '' ? null : payerId}
@@ -247,7 +247,7 @@ function ExpenseFormPage() {
 
       <div ref={splitSectionRef} className="space-y-2">
         <Label>부담자</Label>
-        <ul className="flex flex-col gap-2">
+        <ul className="flex flex-col gap-1">
           {participants.map((participant) => {
             const isChecked = selectedParticipantIds.includes(participant.id)
 
@@ -298,12 +298,12 @@ function ExpenseFormPage() {
           <Button
             type="button"
             variant="outline"
-            className="h-11 flex-1"
+            className="h-10 flex-1"
             onClick={() => navigate('/expenses')}
           >
             지출 내역으로 돌아가기
           </Button>
-          <Button type="submit" className="h-11 flex-1">
+          <Button type="submit" className="h-10 flex-1">
             저장
           </Button>
         </div>

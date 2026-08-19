@@ -65,7 +65,7 @@ function ResultPage() {
 
   return (
     <div className="flex flex-col gap-6 px-4 py-4 pb-28">
-      <div ref={captureRef} className="flex flex-col gap-6 rounded-2xl bg-background p-4">
+      <div ref={captureRef} className="flex flex-col gap-6 rounded-lg bg-background p-4">
         <section className="space-y-0.5">
           <h1 className="text-base font-bold text-foreground">
             {session?.name || '이름 없는 모임'} 정산 결과
@@ -139,18 +139,18 @@ function ResultPage() {
             <Button
               type="button"
               variant="outline"
-              className="h-11 flex-1"
+              className="h-10 flex-1"
               onClick={() => navigate('/expenses')}
             >
               지출 내역으로 돌아가기
             </Button>
             <Button
               type="button"
-              className="h-11 flex-1"
+              className="h-10 flex-1"
               disabled={isDownloading}
               onClick={handleDownloadImage}
             >
-              {isDownloading ? '다운로드 중...' : '이미지로 다운로드'}
+              {isDownloading ? '다운로드 중...' : '정산 결과 다운로드'}
             </Button>
           </div>
           <p className="text-center text-xs text-muted-foreground">

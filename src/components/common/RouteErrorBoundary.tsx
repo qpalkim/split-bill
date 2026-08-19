@@ -19,7 +19,7 @@ function RouteErrorBoundary() {
         title="문제가 발생했어요"
         description={message}
         action={
-          <Button type="button" className="h-11" onClick={() => navigate('/')}>
+          <Button type="button" className="h-10" onClick={() => navigate('/')}>
             홈으로 돌아가기
           </Button>
         }
