@@ -1,6 +1,7 @@
 import { Outlet, ScrollRestoration } from 'react-router'
 import AppHeader from '@/components/common/AppHeader'
 import StepIndicator from '@/components/common/StepIndicator'
+import { Toaster } from '@/components/ui/sonner'
 
 /** 전체 라우트 공통 루트 레이아웃(모바일 전용 max-width 컨테이너) */
 function RootLayout() {
@@ -12,6 +13,7 @@ function RootLayout() {
         <Outlet />
       </main>
       <ScrollRestoration />
+      <Toaster />
     </div>
   )
 }

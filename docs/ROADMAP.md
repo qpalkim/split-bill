@@ -128,7 +128,7 @@ split-bill은 인원이 많거나 지출 항목이 복잡해 정산 계산이 �
   - 더미 데이터 주입 방식 정의 (Phase 3에서 스토어로 교체 가능한 인터페이스 유지)
   - 각 함수에 한국어 JSDoc 주석 추가
 
-- **Task 008: shadcn/ui 기반 공통 컴포넌트 라이브러리 구성**
+- **Task 008: shadcn/ui 기반 공통 컴포넌트 라이브러리 구성** ✅
   - 폼 관련 프리미티브 추가: `form`, `select`, `checkbox`, `radio-group`, `textarea`
   - 피드백 컴포넌트 추가: `dialog`, `alert-dialog`, `sonner`(토스트), `skeleton`, `badge`, `separator`
   - 도메인 공통 컴포넌트 구현: `ParticipantChip`, `AmountText`, `EmptyState`, `ConfirmDialog`, `PageHeader`
