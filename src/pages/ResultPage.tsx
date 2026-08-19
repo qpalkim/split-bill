@@ -39,8 +39,13 @@ function ResultPage() {
   )
   const settlements = useMemo(() => calculateSettlements(balances), [balances])
 
+  /** 참여자 목록이 바뀔 때만 이름 조회용 Map을 다시 만들어 목록 렌더링마다 반복 탐색하지 않게 한다 */
+  const participantNameById = useMemo(
+    () => new Map(participants.map((participant) => [participant.id, participant.name])),
+    [participants],
+  )
   const findParticipantName = (participantId: string) =>
-    participants.find((participant) => participant.id === participantId)?.name ?? '알 수 없음'
+    participantNameById.get(participantId) ?? '알 수 없음'
 
   const hasSettlements = settlements.length > 0
 

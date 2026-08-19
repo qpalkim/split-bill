@@ -1,4 +1,5 @@
 import { X } from 'lucide-react'
+import { memo } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { ICON_SIZE_SM } from '@/constants/icon'
 import { cn } from '@/lib/utils'
@@ -45,4 +46,4 @@ function ParticipantChip({
   )
 }
 
-export default ParticipantChip
+export default memo(ParticipantChip)

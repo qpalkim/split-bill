@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { formatCurrency } from '@/lib/format'
 import { cn } from '@/lib/utils'
 
@@ -16,4 +17,4 @@ function AmountText({ amount, className }: AmountTextProps) {
   )
 }
 
-export default AmountText
+export default memo(AmountText)

@@ -25,8 +25,12 @@ function ExpenseListPage() {
     [expenses],
   )
 
-  const findPayerName = (payerId: string) =>
-    participants.find((participant) => participant.id === payerId)?.name ?? '알 수 없음'
+  /** 참여자 목록이 바뀔 때만 이름 조회용 Map을 다시 만들어 목록 렌더링마다 반복 탐색하지 않게 한다 */
+  const participantNameById = useMemo(
+    () => new Map(participants.map((participant) => [participant.id, participant.name])),
+    [participants],
+  )
+  const findPayerName = (payerId: string) => participantNameById.get(payerId) ?? '알 수 없음'
 
   /** 삭제 확인 다이얼로그에서 확인을 누르면 실제로 지출 항목을 제거 */
   const handleConfirmDelete = () => {
