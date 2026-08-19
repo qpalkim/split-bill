@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { toast } from 'sonner'
 import AmountText from '@/components/common/AmountText'
@@ -7,18 +7,22 @@ import EmptyState from '@/components/common/EmptyState'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { MIN_PARTICIPANTS_COUNT } from '@/constants/validation'
+import { formatDateForFilename, formatSessionDate } from '@/lib/date'
+import { downloadElementAsPng } from '@/lib/image'
 import { calculateBalances, calculateSettlements } from '@/lib/settlement'
 import { useSessionStore } from '@/store/useSessionStore'
 
 /** 정산 결과 페이지(/result) */
 function ResultPage() {
   const navigate = useNavigate()
+  const session = useSessionStore((state) => state.session)
   const participants = useSessionStore((state) => state.participants)
   const expenses = useSessionStore((state) => state.expenses)
   const expenseShares = useSessionStore((state) => state.expenseShares)
 
-  /** Phase4 Task019(html-to-image)에서 이 영역을 PNG로 캡처할 예정 */
+  /** 이 영역만 PNG로 캡처되어 다운로드된다 */
   const captureRef = useRef<HTMLDivElement>(null)
+  const [isDownloading, setIsDownloading] = useState(false)
 
   const isDataInsufficient = participants.length < MIN_PARTICIPANTS_COUNT || expenses.length === 0
 
@@ -40,14 +44,37 @@ function ResultPage() {
 
   const hasSettlements = settlements.length > 0
 
-  /** 결과 화면을 PNG로 저장(Phase4 Task019에서 html-to-image로 실제 구현 예정) */
-  const handleDownloadImage = () => {
-    toast('이미지 다운로드는 다음 업데이트에서 제공될 예정이에요.')
+  /** 정산 결과 캡처 영역을 PNG로 저장 */
+  const handleDownloadImage = async () => {
+    if (captureRef.current === null || isDownloading) {
+      return
+    }
+
+    setIsDownloading(true)
+    try {
+      const filename = `${session?.name || '모임'}_정산결과_${formatDateForFilename(new Date())}.png`
+      await downloadElementAsPng(captureRef.current, filename)
+      toast.success('이미지가 저장됐어요.')
+    } catch (error) {
+      console.error(error)
+      toast.error('이미지 생성에 실패했어요. 다시 시도해주세요.')
+    } finally {
+      setIsDownloading(false)
+    }
   }
 
   return (
     <div className="flex flex-col gap-6 px-4 py-4 pb-28">
-      <div ref={captureRef} className="flex flex-col gap-6">
+      <div ref={captureRef} className="flex flex-col gap-6 rounded-2xl bg-background p-4">
+        <section className="space-y-0.5">
+          <h1 className="text-base font-bold text-foreground">
+            {session?.name || '이름 없는 모임'} 정산 결과
+          </h1>
+          {session ? (
+            <p className="text-xs text-muted-foreground">{formatSessionDate(session.createdAt)}</p>
+          ) : null}
+        </section>
+
         <section className="space-y-2">
           <h2 className="text-sm font-semibold text-foreground">참여자별 지출 요약</h2>
           <Card>
@@ -107,18 +134,28 @@ function ResultPage() {
       </div>
 
       <BottomActionBar>
-        <div className="flex gap-2">
-          <Button
-            type="button"
-            variant="outline"
-            className="h-11 flex-1"
-            onClick={() => navigate('/expenses')}
-          >
-            지출 내역으로 돌아가기
-          </Button>
-          <Button type="button" className="h-11 flex-1" onClick={handleDownloadImage}>
-            이미지로 다운로드
-          </Button>
+        <div className="flex flex-col gap-1.5">
+          <div className="flex gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              className="h-11 flex-1"
+              onClick={() => navigate('/expenses')}
+            >
+              지출 내역으로 돌아가기
+            </Button>
+            <Button
+              type="button"
+              className="h-11 flex-1"
+              disabled={isDownloading}
+              onClick={handleDownloadImage}
+            >
+              {isDownloading ? '다운로드 중...' : '이미지로 다운로드'}
+            </Button>
+          </div>
+          <p className="text-center text-xs text-muted-foreground">
+            다운로드가 되지 않으면 이미지를 길게 눌러 저장해주세요.
+          </p>
         </div>
       </BottomActionBar>
     </div>
