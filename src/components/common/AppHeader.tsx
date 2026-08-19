@@ -1,8 +1,9 @@
-import { RotateCcw } from 'lucide-react'
+import { Receipt, RotateCcw } from 'lucide-react'
 import { useState } from 'react'
+import { Link } from 'react-router'
 import ConfirmDialog from '@/components/common/ConfirmDialog'
 import { Button } from '@/components/ui/button'
-import { ICON_SIZE_SM } from '@/constants/icon'
+import { ICON_SIZE_MD, ICON_SIZE_SM } from '@/constants/icon'
 
 interface AppHeaderProps {
   /** 진행 중인 모임 이름(선택) */
@@ -20,8 +21,14 @@ function AppHeader({ sessionName, participantCount, expenseCount, onResetSession
   const [isResetDialogOpen, setIsResetDialogOpen] = useState(false)
 
   return (
-    <header className="flex h-14 shrink-0 items-center justify-between border-b border-border px-4">
-      <span className="text-lg font-bold text-foreground">split-bill</span>
+    <header className="flex h-14 shrink-0 items-center justify-between bg-background px-4 shadow-sm">
+      <Link
+        to="/"
+        className="flex items-center gap-1.5 rounded-md text-lg font-bold text-foreground outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+      >
+        <Receipt size={ICON_SIZE_MD} className="text-primary" />
+        정돈
+      </Link>
       <div className="flex items-center gap-1">
         {sessionName ? (
           <span className="max-w-[35vw] truncate text-sm text-muted-foreground">
@@ -32,7 +39,7 @@ function AppHeader({ sessionName, participantCount, expenseCount, onResetSession
           type="button"
           variant="ghost"
           size="icon"
-          className="h-11 w-11"
+          className="h-10 w-10"
           aria-label="새 정산 시작하기"
           onClick={() => setIsResetDialogOpen(true)}
         >
