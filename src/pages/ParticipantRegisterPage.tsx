@@ -6,44 +6,46 @@ import ParticipantChip from '@/components/common/ParticipantChip'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { PARTICIPANT_REFERENCED_MESSAGE } from '@/constants/message'
 import { MIN_PARTICIPANTS_COUNT } from '@/constants/validation'
-import { generateId } from '@/lib/id'
-import { dummyParticipants, dummySession } from '@/mocks/dummy-session'
-import type { Participant } from '@/types'
+import { participantSchema } from '@/lib/validation/participantSchema'
+import { isParticipantReferenced } from '@/store/selectors'
+import { useSessionStore } from '@/store/useSessionStore'
 
 /** 참여자 등록 페이지(/) */
 function ParticipantRegisterPage() {
   const navigate = useNavigate()
-  const [sessionName, setSessionName] = useState(dummySession.name)
-  const [participants, setParticipants] = useState<Participant[]>(dummyParticipants)
+  const sessionName = useSessionStore((state) => state.session?.name ?? '')
+  const updateSessionName = useSessionStore((state) => state.updateSessionName)
+  const participants = useSessionStore((state) => state.participants)
+  const addParticipant = useSessionStore((state) => state.addParticipant)
+  const removeParticipant = useSessionStore((state) => state.removeParticipant)
+  const expenses = useSessionStore((state) => state.expenses)
+  const expenseShares = useSessionStore((state) => state.expenseShares)
+
   const [newParticipantName, setNewParticipantName] = useState('')
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
   const isNextEnabled = participants.length >= MIN_PARTICIPANTS_COUNT
 
   /** 입력값을 검증해 참여자 명단에 추가 */
-  const addParticipant = () => {
-    const trimmedName = newParticipantName.trim()
+  const handleAddParticipant = () => {
+    const result = participantSchema.safeParse({ name: newParticipantName })
 
-    if (trimmedName === '') {
-      setErrorMessage('참여자 이름을 입력해주세요.')
+    if (!result.success) {
+      setErrorMessage(result.error.issues[0]?.message ?? '참여자 이름을 확인해주세요.')
       return
     }
 
-    setParticipants((prev) => [...prev, { id: generateId(), name: trimmedName }])
+    addParticipant(result.data.name)
     setNewParticipantName('')
     setErrorMessage(null)
-  }
-
-  /** id에 해당하는 참여자를 명단에서 제거 */
-  const removeParticipant = (id: string) => {
-    setParticipants((prev) => prev.filter((participant) => participant.id !== id))
   }
 
   const handleNameInputKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
       event.preventDefault()
-      addParticipant()
+      handleAddParticipant()
     }
   }
 
@@ -54,7 +56,7 @@ function ParticipantRegisterPage() {
         <Input
           id="session-name"
           value={sessionName}
-          onChange={(event) => setSessionName(event.target.value)}
+          onChange={(event) => updateSessionName(event.target.value)}
           placeholder="모임 이름을 입력하세요 (선택)"
         />
       </div>
@@ -71,7 +73,7 @@ function ParticipantRegisterPage() {
             aria-invalid={errorMessage !== null}
             aria-describedby={errorMessage !== null ? 'participant-name-error' : undefined}
           />
-          <Button type="button" className="h-11" onClick={addParticipant}>
+          <Button type="button" className="h-11" onClick={handleAddParticipant}>
             추가
           </Button>
         </div>
@@ -89,15 +91,24 @@ function ParticipantRegisterPage() {
         />
       ) : (
         <ul className="flex flex-wrap gap-2">
-          {participants.map((participant) => (
-            <li key={participant.id}>
-              <ParticipantChip
-                name={participant.name}
-                isRemovable
-                onRemove={() => removeParticipant(participant.id)}
-              />
-            </li>
-          ))}
+          {participants.map((participant) => {
+            const isReferenced = isParticipantReferenced(
+              { expenses, expenseShares },
+              participant.id,
+            )
+
+            return (
+              <li key={participant.id}>
+                <ParticipantChip
+                  name={participant.name}
+                  isRemovable
+                  isDisabled={isReferenced}
+                  disabledReason={isReferenced ? PARTICIPANT_REFERENCED_MESSAGE : undefined}
+                  onRemove={() => removeParticipant(participant.id)}
+                />
+              </li>
+            )
+          })}
         </ul>
       )}
 

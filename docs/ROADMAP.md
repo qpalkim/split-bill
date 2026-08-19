@@ -22,16 +22,16 @@ split-bill은 인원이 많거나 지출 항목이 복잡해 정산 계산이 �
 
 ### 기술 스택
 
-| 구분 | 기술 |
-|------|------|
-| 빌드/프레임워크 | Vite 8, React 19, TypeScript 6 |
-| 라우팅 | React Router 7 (SPA 클라이언트 라우팅) |
-| 스타일링/UI | TailwindCSS v4(설정파일 없는 엔진), shadcn/ui, Lucide React |
-| 폼/검증 | React Hook Form 7.x, Zod |
-| 상태/영속화 | Zustand + `persist` 미들웨어 (localStorage) |
-| 이미지 생성 | html-to-image |
-| 배포 | Vercel (정적 SPA) |
-| 패키지 관리 | npm |
+| 구분            | 기술                                                        |
+| --------------- | ----------------------------------------------------------- |
+| 빌드/프레임워크 | Vite 8, React 19, TypeScript 6                              |
+| 라우팅          | React Router 7 (SPA 클라이언트 라우팅)                      |
+| 스타일링/UI     | TailwindCSS v4(설정파일 없는 엔진), shadcn/ui, Lucide React |
+| 폼/검증         | React Hook Form 7.x, Zod                                    |
+| 상태/영속화     | Zustand + `persist` 미들웨어 (localStorage)                 |
+| 이미지 생성     | html-to-image                                               |
+| 배포            | Vercel (정적 SPA)                                           |
+| 패키지 관리     | npm                                                         |
 
 ## 개발 워크플로우
 
@@ -179,7 +179,7 @@ split-bill은 인원이 많거나 지출 항목이 복잡해 정산 계산이 �
   - [x] Playwright MCP: localStorage를 강제로 비운 뒤 재진입 시 초기 상태로 정상 시작하는지 확인
   - [x] Playwright MCP: 잘못된 JSON을 localStorage에 주입했을 때 앱이 크래시하지 않고 복구되는지 확인
 
-- **Task 013: 참여자 등록 기능 구현 (F001)**
+- **Task 013: 참여자 등록 기능 구현 (F001)** ✅
   - 모임 이름 입력 및 세션 반영 (선택 입력, 미입력 시 기본 표기)
   - 참여자 추가/삭제 액션 스토어 연동 및 입력 즉시 자동 저장
   - 최소 2명 이상 검증 및 미달 시 "다음" 버튼 비활성화
@@ -188,12 +188,12 @@ split-bill은 인원이 많거나 지출 항목이 복잡해 정산 계산이 �
   - 검증 통과 시 지출 내역 페이지로 이동
 
   #### 테스트 체크리스트
-  - [ ] Playwright MCP: 참여자 1명만 입력한 상태에서 "다음" 버튼이 비활성화되는지 확인
-  - [ ] Playwright MCP: 참여자 2명 이상 입력 후 지출 내역 페이지로 이동되는지 확인
-  - [ ] Playwright MCP: 지출에서 결제자로 참조 중인 참여자의 삭제 버튼이 비활성화되고 안내 문구가 노출되는지 확인
-  - [ ] Playwright MCP: 부담자로만 참조 중인 참여자도 삭제가 차단되는지 확인
-  - [ ] Playwright MCP: 참조가 모두 제거된 뒤에는 해당 참여자 삭제가 가능해지는지 확인
-  - [ ] Playwright MCP: 공백만 입력한 이름이 거부되는지 확인
+  - [x] Playwright MCP: 참여자 1명만 입력한 상태에서 "다음" 버튼이 비활성화되는지 확인
+  - [x] Playwright MCP: 참여자 2명 이상 입력 후 지출 내역 페이지로 이동되는지 확인
+  - [x] Playwright MCP: 지출에서 결제자로 참조 중인 참여자의 삭제 버튼이 비활성화되고 안내 문구가 노출되는지 확인
+  - [x] Playwright MCP: 부담자로만 참조 중인 참여자도 삭제가 차단되는지 확인
+  - [x] Playwright MCP: 참조가 모두 제거된 뒤에는 해당 참여자 삭제가 가능해지는지 확인
+  - [x] Playwright MCP: 공백만 입력한 이름이 거부되는지 확인
 
 - **Task 014: 지출 항목 입력/수정 기능 구현 (F002)**
   - 항목명·금액 입력 폼과 스토어 연동 (`addExpense`, `updateExpense`)

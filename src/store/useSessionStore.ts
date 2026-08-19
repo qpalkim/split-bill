@@ -20,6 +20,7 @@ interface SessionState {
 
 interface SessionActions {
   createSession: (name?: string) => void
+  updateSessionName: (name: string) => void
   addParticipant: (name: string) => void
   removeParticipant: (id: string) => void
   addExpense: (expense: Omit<Expense, 'id'>) => void
@@ -98,6 +99,11 @@ export const useSessionStore = create<SessionState & SessionActions>()(
             createdAt: new Date().toISOString(),
           },
         }),
+
+      updateSessionName: (name) =>
+        set((state) =>
+          state.session ? { session: { ...state.session, name } } : {},
+        ),
 
       addParticipant: (name) =>
         set((state) => ({

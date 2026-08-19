@@ -21,3 +21,17 @@ export const selectSharesByExpenseId = (
   expenseId: string,
 ): ExpenseShare[] =>
   state.expenseShares.filter((share) => share.expenseId === expenseId)
+
+/** isParticipantReferenced 판정에 필요한 상태 슬라이스 */
+interface ReferenceCheckState {
+  expenses: Expense[]
+  expenseShares: ExpenseShare[]
+}
+
+/** 참여자가 지출의 결제자 또는 부담자로 참조 중인지 확인(참조 중이면 삭제를 차단해야 함) */
+export const isParticipantReferenced = (
+  state: ReferenceCheckState,
+  participantId: string,
+): boolean =>
+  state.expenses.some((expense) => expense.payerId === participantId) ||
+  state.expenseShares.some((share) => share.participantId === participantId)

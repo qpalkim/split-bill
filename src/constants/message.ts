@@ -1,6 +1,9 @@
 /** 참여자 이름 미입력 에러 메시지 */
 export const PARTICIPANT_NAME_REQUIRED_MESSAGE = '참여자 이름을 입력해주세요.'
 
+/** 지출에서 참조 중인 참여자를 삭제하려고 할 때 안내 메시지 */
+export const PARTICIPANT_REFERENCED_MESSAGE = '지출 내역에서 사용 중인 참여자는 삭제할 수 없어요.'
+
 /** 지출 항목명 미입력 에러 메시지 */
 export const EXPENSE_TITLE_REQUIRED_MESSAGE = '지출 항목명을 입력해주세요.'
 
