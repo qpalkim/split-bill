@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/select'
 import { useZodForm } from '@/hooks/useZodForm'
 import { formatCurrency } from '@/lib/format'
+import { calculateEqualShares } from '@/lib/split'
 import { expenseSchema } from '@/lib/validation/expenseSchema'
 import { splitSchema } from '@/lib/validation/splitSchema'
 import { useSessionStore } from '@/store/useSessionStore'
@@ -33,6 +34,7 @@ function ExpenseFormPage() {
   const expenseShares = useSessionStore((state) => state.expenseShares)
   const addExpense = useSessionStore((state) => state.addExpense)
   const updateExpense = useSessionStore((state) => state.updateExpense)
+  const setSharesForExpense = useSessionStore((state) => state.setSharesForExpense)
 
   const existingExpense = isEditMode
     ? expenses.find((expense) => expense.id === expenseId)
@@ -104,6 +106,16 @@ function ExpenseFormPage() {
 
     setSplitErrorMessage(null)
 
+    const sharesToSave =
+      splitType === 'equal'
+        ? calculateEqualShares(values.amount, selectedParticipantIds, values.payerId)
+        : selectedParticipantIds.map((participantId) => ({
+            participantId,
+            amount: customAmounts[participantId] ?? 0,
+          }))
+
+    let savedExpenseId: string
+
     if (isEditMode && existingExpense) {
       updateExpense(existingExpense.id, {
         title: values.title,
@@ -111,14 +123,17 @@ function ExpenseFormPage() {
         payerId: values.payerId,
         splitType,
       })
+      savedExpenseId = existingExpense.id
     } else {
-      addExpense({
+      savedExpenseId = addExpense({
         title: values.title,
         amount: values.amount,
         payerId: values.payerId,
         splitType,
       })
     }
+
+    setSharesForExpense(savedExpenseId, sharesToSave)
 
     toast.success(isEditMode ? '지출 항목이 수정되었습니다.' : '지출 항목이 추가되었습니다.')
     navigate('/expenses')

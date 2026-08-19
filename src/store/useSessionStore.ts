@@ -23,9 +23,10 @@ interface SessionActions {
   updateSessionName: (name: string) => void
   addParticipant: (name: string) => void
   removeParticipant: (id: string) => void
-  addExpense: (expense: Omit<Expense, 'id'>) => void
+  addExpense: (expense: Omit<Expense, 'id'>) => string
   updateExpense: (id: string, patch: Partial<Omit<Expense, 'id'>>) => void
   removeExpense: (id: string) => void
+  setSharesForExpense: (expenseId: string, shares: Omit<ExpenseShare, 'id' | 'expenseId'>[]) => void
   resetSession: () => void
 }
 
@@ -118,10 +119,13 @@ export const useSessionStore = create<SessionState & SessionActions>()(
           participants: state.participants.filter((p) => p.id !== id),
         })),
 
-      addExpense: (expense) =>
+      addExpense: (expense) => {
+        const id = crypto.randomUUID()
         set((state) => ({
-          expenses: [...state.expenses, { ...expense, id: crypto.randomUUID() }],
-        })),
+          expenses: [...state.expenses, { ...expense, id }],
+        }))
+        return id
+      },
 
       updateExpense: (id, patch) =>
         set((state) => ({
@@ -133,6 +137,14 @@ export const useSessionStore = create<SessionState & SessionActions>()(
       removeExpense: (id) =>
         set((state) => ({
           expenses: state.expenses.filter((expense) => expense.id !== id),
+        })),
+
+      setSharesForExpense: (expenseId, shares) =>
+        set((state) => ({
+          expenseShares: [
+            ...state.expenseShares.filter((share) => share.expenseId !== expenseId),
+            ...shares.map((share) => ({ ...share, id: crypto.randomUUID(), expenseId })),
+          ],
         })),
 
       resetSession: () => set(initialState),
