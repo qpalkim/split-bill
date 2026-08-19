@@ -4,7 +4,6 @@ import BottomActionBar from '@/components/common/BottomActionBar'
 import ConfirmDialog from '@/components/common/ConfirmDialog'
 import EmptyState from '@/components/common/EmptyState'
 import ParticipantChip from '@/components/common/ParticipantChip'
-import RestoredSessionBanner from '@/components/common/RestoredSessionBanner'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -12,7 +11,7 @@ import { PARTICIPANT_REFERENCED_MESSAGE } from '@/constants/message'
 import { MIN_PARTICIPANTS_COUNT } from '@/constants/validation'
 import { participantSchema } from '@/lib/validation/participantSchema'
 import { isParticipantReferenced } from '@/store/selectors'
-import { useHydrationStore, useSessionStore } from '@/store/useSessionStore'
+import { useSessionStore } from '@/store/useSessionStore'
 import type { Participant } from '@/types'
 
 /** 참여자 등록 페이지(/) */
@@ -26,14 +25,12 @@ function ParticipantRegisterPage() {
   const removeParticipant = useSessionStore((state) => state.removeParticipant)
   const expenses = useSessionStore((state) => state.expenses)
   const expenseShares = useSessionStore((state) => state.expenseShares)
-  const isRestoredSession = useHydrationStore((state) => state.isRestoredSession)
 
   const [newParticipantName, setNewParticipantName] = useState('')
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [pendingDeleteParticipant, setPendingDeleteParticipant] = useState<Participant | null>(
     null,
   )
-  const [isBannerDismissed, setIsBannerDismissed] = useState(false)
   const participantNameInputRef = useRef<HTMLInputElement>(null)
 
   const isNextEnabled = participants.length >= MIN_PARTICIPANTS_COUNT
@@ -68,19 +65,9 @@ function ParticipantRegisterPage() {
     }
   }
 
-  const shouldShowRestoredBanner = isRestoredSession && !isBannerDismissed && session !== null
-
   return (
     <div className="flex flex-col gap-6 px-4 py-4 pb-28">
-      {shouldShowRestoredBanner && session !== null ? (
-        <RestoredSessionBanner
-          sessionName={session.name}
-          createdAt={session.createdAt}
-          onDismiss={() => setIsBannerDismissed(true)}
-        />
-      ) : null}
-
-      <div className="space-y-1.5">
+      <div className="space-y-2.5">
         <Label htmlFor="session-name">모임 이름</Label>
         <Input
           id="session-name"
@@ -90,7 +77,7 @@ function ParticipantRegisterPage() {
         />
       </div>
 
-      <div className="space-y-1.5">
+      <div className="space-y-2.5">
         <Label htmlFor="participant-name">참여자</Label>
         <div className="flex gap-2">
           <Input
@@ -103,7 +90,7 @@ function ParticipantRegisterPage() {
             aria-invalid={errorMessage !== null}
             aria-describedby={errorMessage !== null ? 'participant-name-error' : undefined}
           />
-          <Button type="button" className="h-11" onClick={handleAddParticipant}>
+          <Button type="button" className="h-10" onClick={handleAddParticipant}>
             추가
           </Button>
         </div>
@@ -164,7 +151,7 @@ function ParticipantRegisterPage() {
       <BottomActionBar>
         <Button
           type="button"
-          className="h-11 w-full"
+          className="h-10 w-full"
           disabled={!isNextEnabled}
           onClick={() => navigate('/expenses')}
         >
