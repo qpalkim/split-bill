@@ -113,14 +113,22 @@ split-bill은 인원이 많거나 지출 항목이 복잡해 정산 계산이 �
 
 > 더미 데이터만으로 **전체 화면과 사용자 플로우를 완성**하는 단계. 상태/계산 로직 없이 UI팀 단독 진행이 가능하도록 구성.
 
-- **Task 006: 공통 레이아웃 및 네비게이션 구현**
+- **Task 006: 공통 레이아웃 및 네비게이션 구현** ✅
   - 앱 헤더(서비스 로고, 모임 이름 표시 영역) 구현
   - 3단계 진행 상태를 보여주는 스텝 인디케이터(참여자 → 지출 → 정산) 구현
   - 페이지 하단 고정 액션 바(주요 CTA 배치) 컴포넌트 구현
   - 모바일 전용(max-width 컨테이너 고정, 태블릿/데스크톱 대응 없음) 레이아웃 골격 및 safe-area 대응
   - 페이지 전환 시 스크롤 최상단 복원 처리
 
-- **Task 007: shadcn/ui 기반 공통 컴포넌트 라이브러리 구성**
+- **Task 007: 공통 유틸리티 및 더미 데이터 구축**
+  - `lib/format.ts`: 원화 포맷터(`formatCurrency`), 숫자 파싱(`parseAmount`) 구현
+  - `lib/id.ts`: `crypto.randomUUID` 기반 ID 생성기 구현 (미지원 환경 폴백 포함)
+  - `lib/date.ts`: 세션 생성 일시 포맷 유틸 구현
+  - `mocks/dummy-session.ts`: 참여자 5명 + 지출 6건(균등/항목별 혼합) 더미 데이터 작성
+  - 더미 데이터 주입 방식 정의 (Phase 3에서 스토어로 교체 가능한 인터페이스 유지)
+  - 각 함수에 한국어 JSDoc 주석 추가
+
+- **Task 008: shadcn/ui 기반 공통 컴포넌트 라이브러리 구성**
   - 폼 관련 프리미티브 추가: `form`, `select`, `checkbox`, `radio-group`, `textarea`
   - 피드백 컴포넌트 추가: `dialog`, `alert-dialog`, `sonner`(토스트), `skeleton`, `badge`, `separator`
   - 도메인 공통 컴포넌트 구현: `ParticipantChip`, `AmountText`, `EmptyState`, `ConfirmDialog`, `PageHeader`
@@ -128,21 +136,13 @@ split-bill은 인원이 많거나 지출 항목이 복잡해 정산 계산이 �
   - 도메인 공통 컴포넌트도 shadcn/ui 프리미티브를 조합해 구성하고 커스텀 스타일링은 최소화
   - 컴포넌트 네이밍/props 규칙 정리 (PascalCase 컴포넌트, boolean은 `is`/`has` 접두사)
 
-- **Task 008: 폼 모듈 및 Zod 검증 스키마 작성**
+- **Task 009: 폼 모듈 및 Zod 검증 스키마 작성**
   - React Hook Form + `zodResolver` 공통 셋업 및 폼 래퍼 훅 작성
   - `participantSchema`: 이름 필수·공백 불가·중복 이름 경고, 명단 최소 2명 검증
   - `expenseSchema`: 항목명 필수, 금액 양의 정수, 결제자 필수, 부담자 최소 1명 검증
   - `splitSchema`: 배분 방식별 조건부 검증 (`custom` 선택 시 부담 금액 합계 = 총액 일치 `superRefine`)
   - 공통 에러 메시지 상수화 및 한국어 문구 통일
   - 폼 필드 에러 표시 규칙 및 접근성 속성(`aria-invalid`, `aria-describedby`) 적용
-
-- **Task 009: 공통 유틸리티 및 더미 데이터 구축**
-  - `lib/format.ts`: 원화 포맷터(`formatCurrency`), 숫자 파싱(`parseAmount`) 구현
-  - `lib/id.ts`: `crypto.randomUUID` 기반 ID 생성기 구현 (미지원 환경 폴백 포함)
-  - `lib/date.ts`: 세션 생성 일시 포맷 유틸 구현
-  - `mocks/dummy-session.ts`: 참여자 5명 + 지출 6건(균등/항목별 혼합) 더미 데이터 작성
-  - 더미 데이터 주입 방식 정의 (Phase 3에서 스토어로 교체 가능한 인터페이스 유지)
-  - 각 함수에 한국어 JSDoc 주석 추가
 
 - **Task 010: 전체 페이지 UI 완성 (더미 데이터 기반)**
   - 참여자 등록 페이지 UI: 모임 이름 입력, 참여자 추가 인풋, 명단 리스트, 삭제 버튼, "다음" CTA
