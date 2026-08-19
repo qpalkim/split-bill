@@ -36,7 +36,7 @@ function ParticipantChip({
           disabled={isDisabled}
           aria-label={`${name} 삭제`}
           title={isDisabled ? disabledReason : undefined}
-          className="relative ml-0.5 rounded-full p-0.5 outline-none after:absolute after:-inset-3 hover:bg-muted-foreground/20 focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent"
+          className="relative ml-0.5 cursor-pointer rounded-full p-0.5 outline-none after:absolute after:-inset-3 hover:bg-muted-foreground/20 focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent"
         >
           <X size={ICON_SIZE_SM} />
         </button>
