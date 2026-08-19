@@ -120,7 +120,7 @@ split-bill은 인원이 많거나 지출 항목이 복잡해 정산 계산이 �
   - 모바일 전용(max-width 컨테이너 고정, 태블릿/데스크톱 대응 없음) 레이아웃 골격 및 safe-area 대응
   - 페이지 전환 시 스크롤 최상단 복원 처리
 
-- **Task 007: 공통 유틸리티 및 더미 데이터 구축**
+- **Task 007: 공통 유틸리티 및 더미 데이터 구축** ✅
   - `lib/format.ts`: 원화 포맷터(`formatCurrency`), 숫자 파싱(`parseAmount`) 구현
   - `lib/id.ts`: `crypto.randomUUID` 기반 ID 생성기 구현 (미지원 환경 폴백 포함)
   - `lib/date.ts`: 세션 생성 일시 포맷 유틸 구현
