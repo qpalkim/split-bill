@@ -76,7 +76,7 @@ split-bill은 인원이 많거나 지출 항목이 복잡해 정산 계산이 �
   - ESLint 규칙 점검 및 `npm run lint`, `npm run build` 무오류 통과 확인
   - `index.html` 메타 정보(title, lang="ko", description, favicon) 설정
 
-- **Task 002: TailwindCSS v4 및 shadcn/ui 초기 셋업**
+- **Task 002: TailwindCSS v4 및 shadcn/ui 초기 셋업** ✅
   - `tailwindcss` + `@tailwindcss/vite` 플러그인 설치 및 Vite 플러그인 등록
   - `src/index.css`에 `@import "tailwindcss"` 및 `@theme` 기반 디자인 토큰(컬러/폰트/라운드) 정의
   - shadcn/ui 초기화(`components.json`) 및 기본 프리미티브 추가: `button`, `input`, `card`, `label`
