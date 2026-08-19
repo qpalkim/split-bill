@@ -319,6 +319,36 @@ split-bill은 인원이 많거나 지출 항목이 복잡해 정산 계산이 �
   - [x] Playwright MCP: 초기화 다이얼로그에서 취소 시 데이터가 보존되는지 확인
   - [x] Playwright MCP: 기존 세션 복원 배너가 정확한 모임 이름·일시를 표시하는지 확인
 
+- **Task 021-1: ISSUES.md 대응 — UI/UX 개선 및 버그 수정** ✅
+  - 프로젝트 제목을 "정돈(Split Bill) - 더치페이/정산 관리 앱"으로 변경(`index.html` 타이틀), 헤더 로고 텍스트는 "정돈"으로 축약
+  - 테마를 토스(Toss) 블루(#0064FF) 기반으로 변경: `--primary`, `--ring`, `--sidebar-primary` 등 브랜드 컬러 토큰 교체, `--accent`를 옅은 블루 틴트로 조정
+  - `--radius` 상향 및 `Card` 컴포넌트에 은은한 그림자 추가로 전반적인 디자인을 더 부드럽고 친근한 인상으로 개선
+  - 헤더의 "정돈" 타이틀을 `Link`로 교체해 클릭 시 홈(`/`)으로 이동하도록 구현
+  - `Input` 기본 높이를 `Button`의 CTA 높이(h-11, 44px 터치 타깃)에 맞춰 정렬
+  - `CurrencyInput`의 "원" 접미사를 편집 가능한 input value에서 분리해 절대 위치 suffix로 렌더링 → 백스페이스로 금액이 정상적으로 지워지지 않던 버그 수정
+  - `Button`, `ParticipantChip` 삭제 버튼, `Select`/`Checkbox`/`RadioGroup` 등 클릭 가능한 요소 전반에 `cursor-pointer` 적용
+
+  #### 테스트 체크리스트
+  - [x] Playwright MCP: 헤더 "정돈" 타이틀 클릭 시 `/`로 이동하는지 확인
+  - [x] Playwright MCP: 참여자 등록 화면에서 이름 입력창과 "추가" 버튼의 높이가 일치하는지 스크린샷 확인
+  - [x] Playwright MCP: 지출 금액 입력 후 Backspace로 숫자가 한 자리씩 정상 삭제되는지 확인(콤마 경계 포함)
+  - [x] Playwright MCP: 버튼/체크박스/라디오 요소의 `getComputedStyle().cursor`가 `pointer`인지 확인
+  - [x] `npm run lint`, `npm run build` 무오류 통과 확인
+
+- **Task 021-2: UI 미세 조정 (2차)** ✅
+  - `Select` 트리거 높이를 `Input`/`Button`과 동일하게 정렬(최종 h-10, 40px)
+  - 폼의 Label-Input 세로 간격 확대(`space-y-1.5` → `space-y-2.5`, 5곳)
+  - `--radius`를 1rem → 0.75rem으로 축소하고, `Card`/`Dialog`/`AlertDialog`/지출 카드 로우/복원 배너/정산 결과 캡처 영역의 모서리를 `Button`/`Input`/`Select`와 동일한 `rounded-lg`로 통일(칩·원형 요소는 형태가 달라 제외)
+  - 부담자 체크박스 목록 행 간격 축소(`gap-2` → `gap-1`, 터치 타깃 `min-h-11`은 유지)
+  - `Input`/`Button` 높이를 h-11(44px) → h-10(40px)으로 소폭 축소, 앱 전역 CTA 버튼도 동일 적용
+  - 헤더 "정돈" 타이틀 옆에 `Coins` 아이콘 추가
+  - Primary 컬러를 `#0064FF` → `#3182F6`(더 연한 토스 블루)로 조정
+  - 배경(`--background`)을 옅은 블루그레이로, `--secondary`/`--muted`도 블루 틴트로 조정해 카드와의 레이어감 부여, `Card`/지출 카드 로우의 테두리(ring)를 제거하고 `shadow-sm`만 남겨 경계 없는 카드 스타일로 전환, 헤더의 `border-b`도 `shadow-sm`으로 대체
+
+  #### 참고
+  - Primary `#3182F6` 배경에 흰색 버튼 텍스트의 대비는 약 3.7:1로, WCAG AA 일반 텍스트 기준(4.5:1)에는 다소 못 미침(large-text 기준 3:1은 충족). 사용자가 명시적으로 더 연한 톤을 요청해 우선 적용했으며, 가독성 이슈가 느껴지면 색상을 소폭 진하게 조정 가능
+  - h-10(40px)은 Task 011의 44px 최소 터치 타깃 권장값보다 살짝 작음(사용자 요청에 따른 시각적 우선순위 조정)
+
 ### Phase 5: 최적화 및 배포
 
 - **Task 022: 성능 최적화 및 번들 경량화**
