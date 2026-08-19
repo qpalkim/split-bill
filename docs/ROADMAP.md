@@ -92,7 +92,7 @@ split-bill은 인원이 많거나 지출 항목이 복잡해 정산 계산이 �
   - 404 Not Found 페이지 및 라우트 에러 바운더리 골격 생성
   - Vercel SPA 리라이트를 고려한 라우팅 방식(History API) 확정
 
-- **Task 004: 도메인 타입 및 상수 정의**
+- **Task 004: 도메인 타입 및 상수 정의** ✅
   - `src/types/session.ts`: `Session`(id, name, createdAt) 인터페이스 정의
   - `src/types/participant.ts`: `Participant`(id, name) 인터페이스 정의
   - `src/types/expense.ts`: `Expense`(id, title, amount, payerId, splitType) 및 `SplitType` 유니온(`'equal' | 'custom'`) 정의
