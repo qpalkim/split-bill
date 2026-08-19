@@ -25,3 +25,6 @@ dist-ssr
 
 # shrimp-task-manager 내부 데이터(자체 git 저장소 포함, 프로젝트 소스 아님)
 shirmp_data/
+
+# Playwright MCP 검증 시 생성되는 스냅샷/스크린샷(테스트 산출물, 프로젝트 소스 아님)
+.playwright-mcp/

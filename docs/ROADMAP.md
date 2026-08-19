@@ -84,7 +84,7 @@ split-bill은 인원이 많거나 지출 항목이 복잡해 정산 계산이 �
   - Lucide React 아이콘 사용 규칙 및 공통 사이즈 상수 정의
   - 폰트(Pretendard 등) 적용 및 금액 표기용 tabular-nums 유틸 정의
 
-- **Task 003: 라우팅 구조 및 빈 페이지 골격 생성**
+- **Task 003: 라우팅 구조 및 빈 페이지 골격 생성** ✅
   - React Router 7 `createBrowserRouter` 기반 라우터 구성 및 `main.tsx` 연결
   - 라우트 정의: `/`(참여자 등록), `/expenses`(지출 내역), `/expenses/new`(지출 추가), `/expenses/:expenseId`(지출 수정), `/result`(정산 결과)
   - 각 페이지의 빈 껍데기 컴포넌트 생성 (제목 + 다음 단계 이동 버튼만 배치)
