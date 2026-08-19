@@ -56,7 +56,7 @@ function ExpenseListPage() {
         />
       ) : (
         <>
-          <div className="flex items-center justify-between rounded-xl bg-muted/50 px-4 py-3">
+          <div className="flex items-center justify-between rounded-lg bg-muted/50 px-4 py-3">
             <span className="text-sm font-medium text-foreground">
               총 지출 {expenses.length}건
             </span>
@@ -66,10 +66,10 @@ function ExpenseListPage() {
           <ul className="flex flex-col gap-2">
             {expenses.map((expense) => (
               <li key={expense.id}>
-                <div className="flex items-center gap-2 overflow-hidden rounded-xl bg-card ring-1 ring-foreground/10">
+                <div className="flex items-center gap-2 overflow-hidden rounded-lg bg-card shadow-sm transition-colors hover:bg-muted/50 has-[a:focus-visible]:bg-muted/50">
                   <Link
                     to={`/expenses/${expense.id}`}
-                    className="flex min-w-0 flex-1 flex-col gap-0.5 px-4 py-4 outline-none transition-colors hover:bg-muted/50 focus-visible:bg-muted/50 focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:ring-inset"
+                    className="flex min-w-0 flex-1 flex-col gap-0.5 px-4 py-4 outline-none focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:ring-inset"
                   >
                     <p className="truncate text-sm font-medium text-foreground">{expense.title}</p>
                     <p className="text-xs text-muted-foreground">
@@ -82,7 +82,7 @@ function ExpenseListPage() {
                       type="button"
                       variant="ghost"
                       size="icon"
-                      className="h-11 w-11"
+                      className="h-10 w-10"
                       aria-label={`${expense.title} 삭제`}
                       onClick={() => setPendingDeleteExpense(expense)}
                     >
@@ -114,14 +114,14 @@ function ExpenseListPage() {
           <Button
             type="button"
             variant="outline"
-            className="h-11 flex-1"
+            className="h-10 flex-1"
             onClick={() => navigate('/expenses/new')}
           >
             지출 추가
           </Button>
           <Button
             type="button"
-            className="h-11 flex-1"
+            className="h-10 flex-1"
             disabled={expenses.length === 0}
             onClick={() => navigate('/result')}
           >
