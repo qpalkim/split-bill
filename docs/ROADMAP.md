@@ -374,12 +374,18 @@ split-bill은 인원이 많거나 지출 항목이 복잡해 정산 계산이 �
   - [x] Playwright MCP: 키보드(Tab/Enter)만으로 참여자 등록 → 정산 결과까지 진행 가능한지 확인
   - [x] Playwright MCP: 전 페이지 콘솔 에러 0건 확인
 
-- **Task 024: Vercel 배포 파이프라인 구축**
-  - Vercel 프로젝트 연결 및 Vite 정적 빌드 설정(`npm run build`, 출력 `dist`)
-  - SPA 라우팅용 리라이트 설정(`vercel.json`: 모든 경로 → `/index.html`)
-  - GitHub 연동 자동 배포 및 PR Preview 환경 구성
-  - 프로덕션 빌드 산출물 검증 및 캐시 헤더 설정
-  - 커스텀 도메인/메타 태그(OG 이미지, 소셜 공유 미리보기) 설정
+- **Task 024: Vercel 배포 파이프라인 구축** ✅
+  - `vercel.json` 작성: `buildCommand`(`npm run build`)·`outputDirectory`(`dist`) 명시, SPA 리라이트(모든 경로 → `/index.html`), 정적 자산(`/assets/*`, 아이콘 SVG) 장기 캐시(`immutable`) + `index.html` 무캐시 헤더 설정
+  - `index.html`에 OG/Twitter 메타 태그(`og:title`, `og:description`, `og:image` 등) 및 `theme-color` 추가
+  - `public/og-image.png`(1200×630) 제작: 브랜드 컬러·로고 기반 소셜 공유 카드, Playwright로 캡처해 생성
+  - `npm run build` 산출물에 `og-image.png`·`favicon.svg` 포함 확인, `vite preview`로 `/expenses`·`/result` 딥링크 200 응답(SPA 폴백) 검증
+  - Vercel 프로젝트 생성·GitHub 리포(`qpalkim/split-bill`) 연동·커스텀 도메인 연결은 사용자가 Vercel 대시보드에서 직접 진행하기로 결정(계정에 영향을 주는 작업이라 자동화하지 않음) — 아래 참고 항목에 안내 절차 기재
+
+  #### 참고: Vercel 대시보드에서 직접 진행할 절차
+  1. https://vercel.com/new 에서 GitHub 리포 `qpalkim/split-bill` Import (Framework Preset은 Vite로 자동 인식되며, `vercel.json`의 buildCommand/outputDirectory가 이를 보강)
+  2. Import만 하면 GitHub 연동 자동 배포(main 브랜치 push → Production 배포, 그 외 브랜치/PR → Preview 배포)는 Vercel이 기본 제공하므로 별도 설정 불필요
+  3. 커스텀 도메인이 필요하면 프로젝트의 Settings → Domains에서 보유 도메인을 추가하고 안내되는 DNS 레코드를 등록
+  4. 이미 Vercel CLI(`qpalkim` 계정)로 로그인되어 있으므로, CLI로 진행하고 싶다면 `vercel link` → `vercel git connect` → `vercel --prod` 순서로도 동일하게 처리 가능
 
 - **Task 025: 최종 QA 및 릴리스 점검**
   - PRD 기능 명세 F001~F007 전수 대조 체크리스트 작성 및 검증
