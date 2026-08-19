@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router'
 import { toast } from 'sonner'
 import BottomActionBar from '@/components/common/BottomActionBar'
@@ -19,7 +19,7 @@ import { useZodForm } from '@/hooks/useZodForm'
 import { formatCurrency } from '@/lib/format'
 import { expenseSchema } from '@/lib/validation/expenseSchema'
 import { splitSchema } from '@/lib/validation/splitSchema'
-import { dummyExpenseShares, dummyExpenses, dummyParticipants } from '@/mocks/dummy-session'
+import { useSessionStore } from '@/store/useSessionStore'
 import type { SplitType } from '@/types'
 
 /** 지출 추가(/expenses/new)·수정(/expenses/:expenseId) 공용 페이지 */
@@ -28,12 +28,25 @@ function ExpenseFormPage() {
   const { expenseId } = useParams()
   const isEditMode = expenseId !== undefined
 
+  const participants = useSessionStore((state) => state.participants)
+  const expenses = useSessionStore((state) => state.expenses)
+  const expenseShares = useSessionStore((state) => state.expenseShares)
+  const addExpense = useSessionStore((state) => state.addExpense)
+  const updateExpense = useSessionStore((state) => state.updateExpense)
+
   const existingExpense = isEditMode
-    ? dummyExpenses.find((expense) => expense.id === expenseId)
+    ? expenses.find((expense) => expense.id === expenseId)
     : undefined
   const existingShares = existingExpense
-    ? dummyExpenseShares.filter((share) => share.expenseId === existingExpense.id)
+    ? expenseShares.filter((share) => share.expenseId === existingExpense.id)
     : []
+
+  /** 존재하지 않는 expenseId로 진입하면 지출 내역 페이지로 되돌린다 */
+  useEffect(() => {
+    if (isEditMode && existingExpense === undefined) {
+      navigate('/expenses', { replace: true })
+    }
+  }, [isEditMode, existingExpense, navigate])
 
   const form = useZodForm(expenseSchema, {
     defaultValues: {
@@ -47,7 +60,7 @@ function ExpenseFormPage() {
   const [selectedParticipantIds, setSelectedParticipantIds] = useState<string[]>(
     existingShares.length > 0
       ? existingShares.map((share) => share.participantId)
-      : dummyParticipants.map((participant) => participant.id),
+      : participants.map((participant) => participant.id),
   )
   const [customAmounts, setCustomAmounts] = useState<Record<string, number>>(
     Object.fromEntries(existingShares.map((share) => [share.participantId, share.amount])),
@@ -90,6 +103,23 @@ function ExpenseFormPage() {
     }
 
     setSplitErrorMessage(null)
+
+    if (isEditMode && existingExpense) {
+      updateExpense(existingExpense.id, {
+        title: values.title,
+        amount: values.amount,
+        payerId: values.payerId,
+        splitType,
+      })
+    } else {
+      addExpense({
+        title: values.title,
+        amount: values.amount,
+        payerId: values.payerId,
+        splitType,
+      })
+    }
+
     toast.success(isEditMode ? '지출 항목이 수정되었습니다.' : '지출 항목이 추가되었습니다.')
     navigate('/expenses')
   })
@@ -136,12 +166,12 @@ function ExpenseFormPage() {
           <SelectTrigger id="payer" className="w-full">
             <SelectValue placeholder="결제자를 선택하세요">
               {(value: string | null) =>
-                dummyParticipants.find((participant) => participant.id === value)?.name ?? null
+                participants.find((participant) => participant.id === value)?.name ?? null
               }
             </SelectValue>
           </SelectTrigger>
           <SelectContent>
-            {dummyParticipants.map((participant) => (
+            {participants.map((participant) => (
               <SelectItem key={participant.id} value={participant.id}>
                 {participant.name}
               </SelectItem>
@@ -174,7 +204,7 @@ function ExpenseFormPage() {
       <div className="space-y-2">
         <Label>부담자</Label>
         <ul className="flex flex-col gap-2">
-          {dummyParticipants.map((participant) => {
+          {participants.map((participant) => {
             const isChecked = selectedParticipantIds.includes(participant.id)
 
             return (

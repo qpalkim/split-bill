@@ -195,7 +195,7 @@ split-bill은 인원이 많거나 지출 항목이 복잡해 정산 계산이 �
   - [x] Playwright MCP: 참조가 모두 제거된 뒤에는 해당 참여자 삭제가 가능해지는지 확인
   - [x] Playwright MCP: 공백만 입력한 이름이 거부되는지 확인
 
-- **Task 014: 지출 항목 입력/수정 기능 구현 (F002)**
+- **Task 014: 지출 항목 입력/수정 기능 구현 (F002)** ✅
   - 항목명·금액 입력 폼과 스토어 연동 (`addExpense`, `updateExpense`)
   - 결제자 선택 UI를 참여자 명단과 실시간 동기화
   - 추가 모드(`/expenses/new`)와 수정 모드(`/expenses/:expenseId`) 분기 및 기존 값 프리필
@@ -204,10 +204,10 @@ split-bill은 인원이 많거나 지출 항목이 복잡해 정산 계산이 �
   - 저장 성공 시 지출 내역 페이지 복귀 및 토스트 피드백
 
   #### 테스트 체크리스트
-  - [ ] Playwright MCP: 항목명 미입력 시 저장이 차단되고 에러 메시지가 표시되는지 확인
-  - [ ] Playwright MCP: 금액 0 또는 음수 입력 시 검증 오류가 발생하는지 확인
-  - [ ] Playwright MCP: 기존 항목 클릭 → 값 프리필 → 수정 저장 후 목록에 반영되는지 확인
-  - [ ] Playwright MCP: 잘못된 `expenseId` URL 직접 진입 시 리다이렉트되는지 확인
+  - [x] Playwright MCP: 항목명 미입력 시 저장이 차단되고 에러 메시지가 표시되는지 확인
+  - [x] Playwright MCP: 금액 0 또는 음수 입력 시 검증 오류가 발생하는지 확인
+  - [ ] Playwright MCP: 기존 항목 클릭 → 값 프리필 → 수정 저장 후 목록에 반영되는지 확인 (URL 직접 진입으로 프리필/수정 저장은 확인. "목록 클릭" 및 "목록에 반영"은 ExpenseListPage가 store에 연동되는 Task016 이후 최종 검증 예정)
+  - [x] Playwright MCP: 잘못된 `expenseId` URL 직접 진입 시 리다이렉트되는지 확인
 
 - **Task 015: 배분 방식 지정 로직 구현 (F003)**
   - 배분 방식 토글(균등/항목별) 구현 및 전환 시 입력값 처리 규칙 적용
