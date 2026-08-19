@@ -41,7 +41,10 @@ const STORAGE_KEY = 'split-bill-session'
 
 interface HydrationState {
   isHydrated: boolean
+  /** localStorage에 저장돼 있던 기존 세션을 복원했는지 여부(신규 세션 생성과 구분) */
+  isRestoredSession: boolean
   setHydrated: () => void
+  setRestoredSession: () => void
 }
 
 /**
@@ -50,7 +53,9 @@ interface HydrationState {
  */
 export const useHydrationStore = create<HydrationState>((set) => ({
   isHydrated: false,
+  isRestoredSession: false,
   setHydrated: () => set({ isHydrated: true }),
+  setRestoredSession: () => set({ isRestoredSession: true }),
 }))
 
 let hasWarnedAboutStorageFailure = false
@@ -161,7 +166,10 @@ export const useSessionStore = create<SessionState & SessionActions>()(
         expenseShares: state.expenseShares,
       }),
       migrate: (persistedState) => persistedState as SessionState,
-      onRehydrateStorage: () => () => {
+      onRehydrateStorage: () => (state) => {
+        if (state?.session) {
+          useHydrationStore.getState().setRestoredSession()
+        }
         useHydrationStore.getState().setHydrated()
       },
     },

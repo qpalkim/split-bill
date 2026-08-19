@@ -4,6 +4,7 @@ import BottomActionBar from '@/components/common/BottomActionBar'
 import ConfirmDialog from '@/components/common/ConfirmDialog'
 import EmptyState from '@/components/common/EmptyState'
 import ParticipantChip from '@/components/common/ParticipantChip'
+import RestoredSessionBanner from '@/components/common/RestoredSessionBanner'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -11,25 +12,28 @@ import { PARTICIPANT_REFERENCED_MESSAGE } from '@/constants/message'
 import { MIN_PARTICIPANTS_COUNT } from '@/constants/validation'
 import { participantSchema } from '@/lib/validation/participantSchema'
 import { isParticipantReferenced } from '@/store/selectors'
-import { useSessionStore } from '@/store/useSessionStore'
+import { useHydrationStore, useSessionStore } from '@/store/useSessionStore'
 import type { Participant } from '@/types'
 
 /** 참여자 등록 페이지(/) */
 function ParticipantRegisterPage() {
   const navigate = useNavigate()
-  const sessionName = useSessionStore((state) => state.session?.name ?? '')
+  const session = useSessionStore((state) => state.session)
+  const sessionName = session?.name ?? ''
   const updateSessionName = useSessionStore((state) => state.updateSessionName)
   const participants = useSessionStore((state) => state.participants)
   const addParticipant = useSessionStore((state) => state.addParticipant)
   const removeParticipant = useSessionStore((state) => state.removeParticipant)
   const expenses = useSessionStore((state) => state.expenses)
   const expenseShares = useSessionStore((state) => state.expenseShares)
+  const isRestoredSession = useHydrationStore((state) => state.isRestoredSession)
 
   const [newParticipantName, setNewParticipantName] = useState('')
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [pendingDeleteParticipant, setPendingDeleteParticipant] = useState<Participant | null>(
     null,
   )
+  const [isBannerDismissed, setIsBannerDismissed] = useState(false)
   const participantNameInputRef = useRef<HTMLInputElement>(null)
 
   const isNextEnabled = participants.length >= MIN_PARTICIPANTS_COUNT
@@ -64,8 +68,18 @@ function ParticipantRegisterPage() {
     }
   }
 
+  const shouldShowRestoredBanner = isRestoredSession && !isBannerDismissed && session !== null
+
   return (
     <div className="flex flex-col gap-6 px-4 py-4 pb-28">
+      {shouldShowRestoredBanner && session !== null ? (
+        <RestoredSessionBanner
+          sessionName={session.name}
+          createdAt={session.createdAt}
+          onDismiss={() => setIsBannerDismissed(true)}
+        />
+      ) : null}
+
       <div className="space-y-1.5">
         <Label htmlFor="session-name">모임 이름</Label>
         <Input
