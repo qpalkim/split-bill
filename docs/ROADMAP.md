@@ -227,7 +227,7 @@ split-bill은 인원이 많거나 지출 항목이 복잡해 정산 계산이 �
   - [x] Playwright MCP: 균등 → 항목별 전환 시 입력 상태가 규칙대로 초기화/이관되는지 확인
   - [x] 엣지 케이스: 부담자 1명(전액 부담), 금액 1원, 참여자 20명 대량 배분 검증(+ 결제자가 부담자 목록에 없는 경우 나머지 별도 row 생성)
 
-- **Task 016: 지출 항목 목록 관리 기능 구현 (F004)**
+- **Task 016: 지출 항목 목록 관리 기능 구현 (F004)** ✅
   - 스토어의 `expenses`를 실제 목록으로 렌더링 (항목명/금액/결제자/배분 방식 요약)
   - 항목 클릭 시 수정 페이지 진입, 삭제 시 확인 다이얼로그 노출
   - 항목 삭제 시 연결된 `ExpenseShare` 동시 삭제(캐스케이드) 처리
@@ -236,10 +236,10 @@ split-bill은 인원이 많거나 지출 항목이 복잡해 정산 계산이 �
   - 목록 정렬 기준(등록 순) 확정
 
   #### 테스트 체크리스트
-  - [ ] Playwright MCP: 지출 추가 → 목록에 즉시 반영되고 총합이 갱신되는지 확인
-  - [ ] Playwright MCP: 지출 삭제 후 관련 `ExpenseShare`가 남지 않는지 `browser_evaluate`로 localStorage 검증
-  - [ ] Playwright MCP: 지출 0건일 때 빈 상태가 노출되고 정산 진입이 차단되는지 확인
-  - [ ] Playwright MCP: 삭제 확인 다이얼로그에서 취소 시 항목이 유지되는지 확인
+  - [x] Playwright MCP: 지출 추가 → 목록에 즉시 반영되고 총합이 갱신되는지 확인
+  - [x] Playwright MCP: 지출 삭제 후 관련 `ExpenseShare`가 남지 않는지 `browser_evaluate`로 localStorage 검증
+  - [x] Playwright MCP: 지출 0건일 때 빈 상태가 노출되고 정산 진입이 차단되는지 확인
+  - [x] Playwright MCP: 삭제 확인 다이얼로그에서 취소 시 항목이 유지되는지 확인
 
 - **Task 017: 정산 자동 계산 엔진 구현 (F005)**
   - `lib/settlement.ts`에 순수 함수로 계산 엔진 작성 (UI/스토어 의존 없음)

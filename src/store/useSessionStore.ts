@@ -137,6 +137,7 @@ export const useSessionStore = create<SessionState & SessionActions>()(
       removeExpense: (id) =>
         set((state) => ({
           expenses: state.expenses.filter((expense) => expense.id !== id),
+          expenseShares: state.expenseShares.filter((share) => share.expenseId !== id),
         })),
 
       setSharesForExpense: (expenseId, shares) =>
