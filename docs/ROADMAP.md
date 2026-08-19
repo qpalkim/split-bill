@@ -164,7 +164,7 @@ split-bill은 인원이 많거나 지출 항목이 복잡해 정산 계산이 �
 
 > 더미 데이터를 실제 Zustand 상태로 교체하고 **F001~F005, F007의 비즈니스 로직**을 구현하는 단계. 계산 규칙 정확도가 서비스의 핵심 가치.
 
-- **Task 012: Zustand persist 실연동 및 세션 상태 관리 구현 (F007)** - 우선순위
+- **Task 012: Zustand persist 실연동 및 세션 상태 관리 구현 (F007)** ✅ - 우선순위
   - `useSessionStore`에 `persist` 미들웨어 실제 적용 (localStorage, 키 `split-bill-session`)
   - 모든 CRUD 액션 구현 및 상태 불변성 보장
   - 앱 최초 진입 시 세션 자동 생성, 기존 세션 존재 시 자동 복원 로직 구현
@@ -173,11 +173,11 @@ split-bill은 인원이 많거나 지출 항목이 복잡해 정산 계산이 �
   - localStorage 접근 실패(시크릿 모드/용량 초과) 시 폴백 및 안내 처리
 
   #### 테스트 체크리스트
-  - [ ] Playwright MCP: 참여자 입력 → 새로고침 → 명단이 그대로 복원되는지 확인
-  - [ ] Playwright MCP: 지출 항목 등록 → 새로고침 → 목록·배분 정보 유지 확인
-  - [ ] Playwright MCP: `browser_evaluate`로 localStorage `split-bill-session` 값의 구조/버전 검증
-  - [ ] Playwright MCP: localStorage를 강제로 비운 뒤 재진입 시 초기 상태로 정상 시작하는지 확인
-  - [ ] Playwright MCP: 잘못된 JSON을 localStorage에 주입했을 때 앱이 크래시하지 않고 복구되는지 확인
+  - [ ] Playwright MCP: 참여자 입력 → 새로고침 → 명단이 그대로 복원되는지 확인 (페이지가 스토어에 연동되는 Task013 이후 최종 검증 예정)
+  - [ ] Playwright MCP: 지출 항목 등록 → 새로고침 → 목록·배분 정보 유지 확인 (페이지가 스토어에 연동되는 Task015 이후 최종 검증 예정)
+  - [x] Playwright MCP: `browser_evaluate`로 localStorage `split-bill-session` 값의 구조/버전 검증
+  - [x] Playwright MCP: localStorage를 강제로 비운 뒤 재진입 시 초기 상태로 정상 시작하는지 확인
+  - [x] Playwright MCP: 잘못된 JSON을 localStorage에 주입했을 때 앱이 크래시하지 않고 복구되는지 확인
 
 - **Task 013: 참여자 등록 기능 구현 (F001)**
   - 모임 이름 입력 및 세션 반영 (선택 입력, 미입력 시 기본 표기)

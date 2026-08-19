@@ -1,12 +1,14 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import type { PersistStorage, StorageValue } from 'zustand/middleware'
+import { toast } from 'sonner'
 import type { Expense, ExpenseShare, Participant, Session } from '@/types'
 
 /**
- * 세션/참여자/지출 상태를 관리하는 Zustand 스토어 골격.
+ * 세션/참여자/지출 상태를 관리하는 Zustand 스토어.
  *
- * 참조 무결성 검사, 항목별 배분 합계 검증, 캐스케이드 삭제 등 실제 비즈니스 로직과
- * partialize/migrate 저장 전략은 Phase3(Task012~013)에서 구현한다.
+ * persist 미들웨어로 localStorage(키: split-bill-session)에 자동 저장/복원된다.
+ * 참조 무결성 검사, 항목별 배분 합계 검증 등 나머지 비즈니스 로직은 Phase3의 이후 태스크(013~)에서 구현한다.
  * 계산 로직(배분/정산 등)은 이 스토어가 아닌 src/lib/에 위치시킨다.
  */
 interface SessionState {
@@ -31,6 +33,56 @@ const initialState: SessionState = {
   participants: [],
   expenses: [],
   expenseShares: [],
+}
+
+const STORAGE_KEY = 'split-bill-session'
+
+interface HydrationState {
+  isHydrated: boolean
+  setHydrated: () => void
+}
+
+/**
+ * useSessionStore의 hydration(localStorage 복원) 완료 여부를 별도로 추적하는 비영속 스토어.
+ * RootLayout이 hydration 완료 전까지 빈 화면을 렌더링해 깜빡임을 방지하는 데 사용한다.
+ */
+export const useHydrationStore = create<HydrationState>((set) => ({
+  isHydrated: false,
+  setHydrated: () => set({ isHydrated: true }),
+}))
+
+let hasWarnedAboutStorageFailure = false
+
+/**
+ * localStorage 접근 실패(시크릿 모드, 용량 초과, 손상된 JSON 등)를 안전하게 처리하는 커스텀 storage.
+ * 읽기 실패 시 null을 반환해 초기 상태로 폴백하고, 쓰기 실패 시 조용히 무시하되 최초 1회만 토스트로 안내한다.
+ */
+const safeSessionStorage: PersistStorage<SessionState> = {
+  getItem: (name) => {
+    try {
+      const raw = window.localStorage.getItem(name)
+      return raw === null ? null : (JSON.parse(raw) as StorageValue<SessionState>)
+    } catch {
+      return null
+    }
+  },
+  setItem: (name, value) => {
+    try {
+      window.localStorage.setItem(name, JSON.stringify(value))
+    } catch {
+      if (!hasWarnedAboutStorageFailure) {
+        hasWarnedAboutStorageFailure = true
+        toast.warning('브라우저 저장 공간에 접근할 수 없어 이번 세션은 저장되지 않아요.')
+      }
+    }
+  },
+  removeItem: (name) => {
+    try {
+      window.localStorage.removeItem(name)
+    } catch {
+      // 접근 실패 시 별도 처리 없이 무시
+    }
+  },
 }
 
 export const useSessionStore = create<SessionState & SessionActions>()(
@@ -80,8 +132,19 @@ export const useSessionStore = create<SessionState & SessionActions>()(
       resetSession: () => set(initialState),
     }),
     {
-      name: 'split-bill-session',
+      name: STORAGE_KEY,
+      storage: safeSessionStorage,
       version: 1,
+      partialize: (state) => ({
+        session: state.session,
+        participants: state.participants,
+        expenses: state.expenses,
+        expenseShares: state.expenseShares,
+      }),
+      migrate: (persistedState) => persistedState as SessionState,
+      onRehydrateStorage: () => () => {
+        useHydrationStore.getState().setHydrated()
+      },
     },
   ),
 )
