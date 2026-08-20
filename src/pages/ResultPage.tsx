@@ -58,7 +58,7 @@ function ResultPage() {
     }
     track('cheer_click')
     setHasCheered(true)
-    toast.success('응원해주셔서 감사해요!')
+    toast.success('응원해주셔서 감사해요! 🥹')
   }
 
   /** 정산 결과 캡처 영역을 PNG로 저장 */
@@ -85,7 +85,7 @@ function ResultPage() {
   }
 
   return (
-    <div className="flex flex-col gap-6 px-4 py-4 pb-28">
+    <div className="flex flex-col gap-6 px-4 py-4 pb-24">
       <div ref={captureRef} className="flex flex-col gap-6 rounded-lg bg-background p-4">
         <section className="space-y-0.5">
           <h1 className="text-base font-bold text-foreground">
@@ -154,6 +154,16 @@ function ResultPage() {
         </section>
       </div>
 
+      {!hasCheered ? (
+        <button
+          type="button"
+          className="mx-auto cursor-pointer text-xs text-muted-foreground underline-offset-2 hover:underline"
+          onClick={handleCheerClick}
+        >
+          개발자 응원하기 🙌
+        </button>
+      ) : null}
+
       <BottomActionBar>
         <div className="flex flex-col gap-1.5">
           <div className="flex gap-2">
@@ -177,14 +187,6 @@ function ResultPage() {
           <p className="text-center text-xs text-muted-foreground">
             다운로드가 되지 않으면 이미지를 길게 눌러 저장해주세요.
           </p>
-          <button
-            type="button"
-            className="mx-auto text-xs text-muted-foreground underline-offset-2 hover:underline disabled:no-underline"
-            disabled={hasCheered}
-            onClick={handleCheerClick}
-          >
-            {hasCheered ? '응원해주셔서 감사해요' : '🙌 개발자 응원하기'}
-          </button>
         </div>
       </BottomActionBar>
     </div>
