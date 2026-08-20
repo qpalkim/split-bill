@@ -1,3 +1,4 @@
+import { Info } from 'lucide-react'
 import { useRef, useState, type KeyboardEvent } from 'react'
 import { useNavigate } from 'react-router'
 import BottomActionBar from '@/components/common/BottomActionBar'
@@ -7,6 +8,7 @@ import ParticipantChip from '@/components/common/ParticipantChip'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { ICON_SIZE_SM } from '@/constants/icon'
 import {
   PARTICIPANT_MAX_COUNT_MESSAGE,
   PARTICIPANT_NAME_DUPLICATE_MESSAGE,
@@ -35,6 +37,7 @@ function ParticipantRegisterPage() {
   const [pendingDeleteParticipant, setPendingDeleteParticipant] = useState<Participant | null>(
     null,
   )
+  const [isGuideOpen, setIsGuideOpen] = useState(false)
   const participantNameInputRef = useRef<HTMLInputElement>(null)
 
   const isNextEnabled = participants.length >= MIN_PARTICIPANTS_COUNT
@@ -87,10 +90,24 @@ function ParticipantRegisterPage() {
 
   return (
     <div className="flex flex-col gap-6 px-4 py-4 pb-28">
-      <p className="text-xs text-muted-foreground">
-        입력한 정보는 이 브라우저에만 저장돼요. 다른 기기·브라우저와는 공유되지 않으니, 정산이
-        끝나면 결과를 이미지로 저장해두세요.
-      </p>
+      <div>
+        <button
+          type="button"
+          className="flex items-center gap-1 text-xs text-muted-foreground outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+          aria-expanded={isGuideOpen}
+          aria-controls="storage-guide"
+          onClick={() => setIsGuideOpen((prev) => !prev)}
+        >
+          <Info size={ICON_SIZE_SM} />
+          저장 안내
+        </button>
+        {isGuideOpen ? (
+          <p id="storage-guide" className="mt-1.5 text-xs text-muted-foreground">
+            입력한 정보는 이 브라우저에만 저장돼요. 다른 기기·브라우저와는 공유되지 않으니, 정산이
+            끝나면 결과를 이미지로 저장해두세요.
+          </p>
+        ) : null}
+      </div>
 
       <div className="space-y-2.5">
         <Label htmlFor="session-name">모임 이름</Label>

@@ -63,7 +63,7 @@ function RootLayout() {
         <Outlet />
       </main>
       <ScrollRestoration />
-      <Toaster />
+      <Toaster position="top-center" />
     </div>
   )
 }

@@ -19,6 +19,16 @@ interface AppHeaderProps {
 /** 로고와 모임 이름, 세션 초기화 버튼을 보여주는 공통 상단 헤더 */
 function AppHeader({ sessionName, participantCount, expenseCount, onResetSession }: AppHeaderProps) {
   const [isResetDialogOpen, setIsResetDialogOpen] = useState(false)
+  const hasNothingToLose = participantCount === 0 && expenseCount === 0
+
+  /** 아직 아무것도 입력하지 않은 첫 화면에서는 확인 모달 없이 바로 초기화한다 */
+  const handleResetButtonClick = () => {
+    if (hasNothingToLose) {
+      onResetSession()
+      return
+    }
+    setIsResetDialogOpen(true)
+  }
 
   return (
     <header className="flex h-14 shrink-0 items-center justify-between bg-background px-4 shadow-sm">
@@ -41,7 +51,7 @@ function AppHeader({ sessionName, participantCount, expenseCount, onResetSession
           size="icon"
           className="h-10 w-10"
           aria-label="새 정산 시작하기"
-          onClick={() => setIsResetDialogOpen(true)}
+          onClick={handleResetButtonClick}
         >
           <RotateCcw size={ICON_SIZE_SM} />
         </Button>

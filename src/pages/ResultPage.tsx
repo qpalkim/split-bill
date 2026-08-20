@@ -73,6 +73,10 @@ function ResultPage() {
       await downloadElementAsPng(captureRef.current, filename)
       toast.success('이미지가 저장됐어요.')
     } catch (error) {
+      const isShareCancelled = error instanceof DOMException && error.name === 'AbortError'
+      if (isShareCancelled) {
+        return
+      }
       console.error(error)
       toast.error('이미지 생성에 실패했어요. 다시 시도해주세요.')
     } finally {
