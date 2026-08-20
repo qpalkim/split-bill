@@ -456,8 +456,15 @@ split-bill은 인원이 많거나 지출 항목이 복잡해 정산 계산이 �
   - 원인: `html-to-image`는 SVG `<foreignObject>` 기반으로 DOM을 캡처하는데, Safari의 `<foreignObject>` 보안 모델·렌더링 방식과 호환되지 않는 게 해당 라이브러리의 알려진 한계(공식적으로 "Safari 미지원"으로 문서화됨) — WebSearch로 확인.
   - 조치: `html-to-image`를 제거하고, 동일한 API 계열이면서 Safari 호환성을 명시적으로 다루는 유지보수 포크 `modern-screenshot`(`domToBlob`)으로 교체(`src/lib/image.ts`). 폰트 임베딩이 기본 옵션으로 자동 처리돼 기존의 수동 `getFontEmbedCSS` 호출도 제거됨. `pixelRatio` → `scale`, `cacheBust` → `fetch.bypassingCache`로 옵션명만 매핑, iOS 분기(Web Share API)·데스크톱 폴백(앵커 다운로드) 로직은 변경 없음.
   - Playwright(Chromium)는 실제 Safari WebKit의 `<foreignObject>` 렌더링 경로를 재현하지 못해 이 수정은 실기기 재검증이 필요 — 데스크톱에서 다운로드·화질·폰트 임베딩 회귀 여부만 확인.
+  - **1차 조치 실패**: 사용자가 iOS Safari에서 재검증한 결과 동일한 깨짐이 그대로 재현됨. `html-to-image`/`modern-screenshot` 모두 결국 WebKit의 `<foreignObject>` 래스터화에 의존하므로, 라이브러리 문제가 아니라 **캡처 대상 DOM의 CSS 자체**가 WebKit foreignObject 렌더링과 충돌하는 것으로 재판단.
+  - **2차 조치**: 깨진 이미지를 다시 분석한 결과 카드 배경·그림자만 전체 너비로 그려지지 못하고 오른쪽 콘텐츠 폭만큼만 렌더링되는 패턴이었음. WebSearch로 조사한 두 가지 원인 후보를 한 번에 수정(재검증 왕복 비용을 줄이기 위해 묶어서 처리):
+    1. `src/index.css`의 테마 색상을 전부 `oklch()`에서 hex/rgb로 전환(`--background`, `--card`, `--foreground`, `--destructive`, `--border`, `--chart-*`, `--sidebar*` 등) — Tailwind v4의 oklch 색상이 DOM-캡처 도구와 충돌하는 사례가 다수 보고됨(`html2canvas`는 oklch를 만나면 파싱 에러를 던짐).
+    2. `src/components/ui/card.tsx`의 `Card`에 명시적 `w-full` 추가 — `flex flex-col` 부모의 `align-items: stretch` 묵시적 동작에 의존하던 너비 계산을 명시적으로 바꿔, WebKit foreignObject의 flex-stretch 레이아웃 버그 가능성을 제거.
+  - 데스크톱에서 색상 변경 전후 스크린샷을 비교해 시각적 차이가 없음을 확인(shadcn 기본 neutral 팔레트의 정확한 hex 대응값 사용).
+  - 이번에도 해결되지 않으면 `html2canvas-pro`(oklch를 공식 지원하는 non-foreignObject 캡처 라이브러리)로 전환하는 것을 다음 단계로 준비해둠(미구현).
 
   #### 테스트 체크리스트
   - [x] Playwright MCP: 데스크톱 Chromium에서 정산 결과 다운로드가 정상 동작하고, 카드 배경·그림자·폰트가 깨지지 않는지 확인(회귀 검증)
+  - [x] Playwright MCP: oklch → hex 전환 전후 스크린샷 비교로 색상 시각적 차이 없음 확인
   - [x] `npm run lint`, `npm run build` 무오류 통과 확인
   - [ ] 실제 iOS Safari 기기에서 다운로드 이미지의 카드 배경·그림자가 정상 렌더링되는지 재검증 (사용자 확인 필요)

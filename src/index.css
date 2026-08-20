@@ -53,38 +53,45 @@ body {
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/*
+ * 색상은 전부 oklch()가 아닌 hex/rgb로 정의한다.
+ * 정산 결과 다운로드(modern-screenshot)가 DOM을 SVG <foreignObject>로 캡처하는데,
+ * iOS Safari가 그 안의 oklch() 배경색을 래스터화하지 못해 카드 배경이 누락되는
+ * 문제가 있었다(Task 029 2차 수정). 아래 값들은 원래 oklch 값과 동일한 색의
+ * shadcn 기본 neutral 팔레트 hex 대응값이라 시각적 차이는 없다.
+ */
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
+  --background: #ffffff;
+  --foreground: #0a0a0a;
+  --card: #ffffff;
+  --card-foreground: #0a0a0a;
+  --popover: #ffffff;
+  --popover-foreground: #0a0a0a;
   --primary: #3182f6;
   --primary-foreground: #ffffff;
   --secondary: #eef2f8;
-  --secondary-foreground: oklch(0.205 0 0);
+  --secondary-foreground: #171717;
   --muted: #eef2f8;
-  --muted-foreground: oklch(0.556 0 0);
+  --muted-foreground: #737373;
   --accent: #eaf2ff;
   --accent-foreground: #3182f6;
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
+  --destructive: #dc2626;
+  --border: #e5e5e5;
+  --input: #e5e5e5;
   --ring: #3182f6;
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
+  --chart-1: #d4d4d4;
+  --chart-2: #737373;
+  --chart-3: #525252;
+  --chart-4: #404040;
+  --chart-5: #262626;
   --radius: 0.75rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar: #fafafa;
+  --sidebar-foreground: #0a0a0a;
   --sidebar-primary: #3182f6;
   --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: #eaf2ff;
   --sidebar-accent-foreground: #3182f6;
-  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-border: #e5e5e5;
   --sidebar-ring: #3182f6;
 }
 
