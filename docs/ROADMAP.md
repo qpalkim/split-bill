@@ -173,8 +173,8 @@ split-bill은 인원이 많거나 지출 항목이 복잡해 정산 계산이 �
   - localStorage 접근 실패(시크릿 모드/용량 초과) 시 폴백 및 안내 처리
 
   #### 테스트 체크리스트
-  - [ ] Playwright MCP: 참여자 입력 → 새로고침 → 명단이 그대로 복원되는지 확인 (페이지가 스토어에 연동되는 Task013 이후 최종 검증 예정)
-  - [ ] Playwright MCP: 지출 항목 등록 → 새로고침 → 목록·배분 정보 유지 확인 (페이지가 스토어에 연동되는 Task015 이후 최종 검증 예정)
+  - [x] Playwright MCP: 참여자 입력 → 새로고침 → 명단이 그대로 복원되는지 확인 (Task025 전체 플로우 E2E 재검증에서 커버 확인)
+  - [x] Playwright MCP: 지출 항목 등록 → 새로고침 → 목록·배분 정보 유지 확인 (Task025 전체 플로우 E2E 재검증에서 커버 확인)
   - [x] Playwright MCP: `browser_evaluate`로 localStorage `split-bill-session` 값의 구조/버전 검증
   - [x] Playwright MCP: localStorage를 강제로 비운 뒤 재진입 시 초기 상태로 정상 시작하는지 확인
   - [x] Playwright MCP: 잘못된 JSON을 localStorage에 주입했을 때 앱이 크래시하지 않고 복구되는지 확인
@@ -206,7 +206,7 @@ split-bill은 인원이 많거나 지출 항목이 복잡해 정산 계산이 �
   #### 테스트 체크리스트
   - [x] Playwright MCP: 항목명 미입력 시 저장이 차단되고 에러 메시지가 표시되는지 확인
   - [x] Playwright MCP: 금액 0 또는 음수 입력 시 검증 오류가 발생하는지 확인
-  - [ ] Playwright MCP: 기존 항목 클릭 → 값 프리필 → 수정 저장 후 목록에 반영되는지 확인 (URL 직접 진입으로 프리필/수정 저장은 확인. "목록 클릭" 및 "목록에 반영"은 ExpenseListPage가 store에 연동되는 Task016 이후 최종 검증 예정)
+  - [x] Playwright MCP: 기존 항목 클릭 → 값 프리필 → 수정 저장 후 목록에 반영되는지 확인 (Task025 전체 플로우 E2E 재검증에서 커버 확인)
   - [x] Playwright MCP: 잘못된 `expenseId` URL 직접 진입 시 리다이렉트되는지 확인
 
 - **Task 015: 배분 방식 지정 로직 구현 (F003)** ✅
@@ -250,7 +250,7 @@ split-bill은 인원이 많거나 지출 항목이 복잡해 정산 계산이 �
   - 계산 엔진 단위 테스트 케이스 목록 정의 (수기 계산 결과와 대조)
 
   #### 테스트 체크리스트
-  - [ ] Playwright MCP: 참여자 3명·지출 3건 시나리오를 UI로 입력해 송금 내역이 수기 계산 결과와 일치하는지 확인 (ResultPage가 아직 더미 데이터라 이번엔 dev 서버 모듈을 동적 import해 함수 직접 호출로 대체 검증; 실제 UI 입력 경로는 Task018에서 최종 검증 예정)
+  - [x] Playwright MCP: 참여자 3명·지출 3건 시나리오를 UI로 입력해 송금 내역이 수기 계산 결과와 일치하는지 확인 (Task025 전체 플로우 E2E 재검증에서 커버 확인)
   - [x] Playwright MCP: 모든 송금 금액의 합이 채권자 총 잔액과 일치하는지 확인
   - [x] Playwright MCP: 송금 건수가 (참여자 수 − 1) 이하인지 확인
   - [x] Playwright MCP: 1인이 전부 결제한 단순 케이스에서 송금이 (인원 − 1)건으로 나오는지 확인
@@ -399,3 +399,25 @@ split-bill은 인원이 많거나 지출 항목이 복잡해 정산 계산이 �
   - [x] Playwright MCP: 배포된 프로덕션 URL에서 전체 플로우 E2E 재검증
   - [x] Playwright MCP: 프로덕션 환경 새로고침·직접 URL 진입 시 404 없이 라우팅되는지 확인
   - [x] Playwright MCP: 프로덕션에서 PNG 다운로드 정상 동작 확인
+
+- **Task 026: ISSUES.md 대응 — 상한 검증, iOS 다운로드, UX/문서 보완** ✅
+  - **기능 추가**: 개발자 응원하기 버튼(`ResultPage`) 추가. 프로젝트가 서버/DB를 두지 않는 원칙이라 자체 집계는 불가능해, 이미 배포 중인 Vercel Analytics 커스텀 이벤트(`@vercel/analytics`, `track('cheer_click')`)로 대체 — 코드상 서버/DB 없이 이벤트만 전송, 개발자는 Vercel 대시보드에서 확인. 세션당 1회만 전송되도록 클릭 후 버튼 비활성화.
+  - **참여자 동일 이름 등록 방지**: `ParticipantRegisterPage`에서 등록된 이름과 정확히 일치하면 차단, 신규 메시지(`PARTICIPANT_NAME_DUPLICATE_MESSAGE`) 노출.
+  - **참여자 최대 20명 / 지출 항목 최대 50건 상한**: `constants/validation.ts`에 `MAX_PARTICIPANTS_COUNT`(20)·`MAX_EXPENSES_COUNT`(50) 추가. 상한 도달 시 참여자 등록 화면의 입력창·추가 버튼과 지출 목록의 "지출 추가" 버튼을 비활성화하고 안내 메시지 노출. `ExpenseFormPage`에는 상한 초과 상태에서 `/expenses/new`에 직접 진입하는 경우를 막는 리다이렉트 가드 추가.
+  - **계산 정확성 재검증**: `lib/settlement.ts`/`lib/split.ts`는 코드 변경 없이 Playwright로 재검증만 수행(아래 체크리스트).
+  - **리팩토링**: 아무 곳에서도 참조되지 않던 `src/lib/id.ts`(`generateId`, 실제로는 `crypto.randomUUID()`를 직접 호출) 삭제. `package.json`의 `shadcn`을 런타임 `dependencies`에서 `devDependencies`로 이동(CLI 전용 도구). `npm run lint`·IDE 진단 모두 0건으로 별도 경고 코드는 발견되지 않음. Task012/014/017의 미체크 테스트 항목 4건을 Task025 전체 플로우 E2E 재검증에서 실질적으로 커버된 것으로 확인해 `[x]` 처리.
+  - **UX**: 토스트 위치를 하단→상단(`position="top-center"`)으로 변경해 `BottomActionBar` 버튼과의 겹침 해소. iOS Safari에서 `<a download>`가 새 탭으로 열리며 다운로드가 안 되는 문제를 Web Share API(`navigator.share({ files })`)로 우회하되, 데스크톱 Chrome/Edge 등도 Web Share API를 지원해 기존에 정상 동작하던 다운로드 흐름을 깨뜨릴 뻔했음 — User-Agent 기반으로 iOS(아이폰/아이패드, 데스크톱 모드 아이패드 포함)에서만 Web Share를 사용하고 그 외는 기존 앵커 다운로드를 유지하도록 제한. 참여자 등록 화면의 로컬 저장 안내 문구를 기본 접힘 토글 UI로 변경. 첫 화면(참여자·지출 모두 0건)에서 초기화 버튼 클릭 시 확인 모달 없이 즉시 초기화.
+  - **문서화**: Playwright MCP로 dev 서버의 참여자 등록·지출 내역·정산 결과 화면을 캡처해 `docs/images/`에 저장하고 README에 삽입.
+
+  #### 테스트 체크리스트
+  - [x] Playwright MCP: 참여자 20명 등록 후 입력창/추가 버튼 비활성화 및 상한 메시지 노출 확인
+  - [x] Playwright MCP: 동일 이름 참여자 재등록 시 중복 에러 메시지 확인
+  - [x] Playwright MCP: `MAX_EXPENSES_COUNT`를 임시로 2로 낮춰 지출 3번째 등록 시 "지출 추가" 버튼 비활성화 및 `/expenses/new` 직접 진입 시 리다이렉트+토스트 확인(검증 후 50으로 원복)
+  - [x] Playwright MCP: 19명 참여자·19,000원/100원 지출 시나리오로 균등 배분 나머지 처리(결제자 추가 부담) 및 순잔액 합 0, 송금 18건이 손계산과 일치하는지 확인
+  - [x] Playwright MCP: 참여자 3명(지민/서연/도윤)·지출 2건(45,000원/10,000원) 시나리오로 손계산 결과(지민 +26,667 / 서연 -8,334 / 도윤 -18,333, 송금 2건)와 정확히 일치하는지 확인(README 스크린샷 겸용)
+  - [x] Playwright MCP: 토스트가 화면 상단에 노출되어 하단 버튼과 겹치지 않는지 확인
+  - [x] Playwright MCP: 저장 안내 토글 클릭 시 펼침/접힘 동작 확인
+  - [x] Playwright MCP: 첫 화면(참여자 0명)에서 초기화 버튼 클릭 시 모달 없이 즉시 처리되는지, 데이터가 있는 상태에서는 기존처럼 확인 모달이 뜨는지 확인
+  - [x] Playwright MCP: 응원하기 버튼 클릭 시 Vercel Analytics 디버그 콘솔에 `cheer_click` 이벤트가 기록되고, 버튼이 "응원해주셔서 감사해요"로 비활성화되는지 확인
+  - [x] Playwright MCP: 정산 결과 다운로드가 데스크톱 브라우저에서 Web Share API 없이 기존 앵커 다운로드로 정상 동작하는지 확인(iOS 분기가 데스크톱 다운로드를 막지 않는지 회귀 검증)
+  - [x] `npm run lint`, `npm run build` 무오류 통과 확인

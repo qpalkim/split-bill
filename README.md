@@ -18,6 +18,12 @@
 - **정산 결과 이미지 다운로드** — 결과 화면을 PNG로 저장해 카카오톡 등으로 공유
 - **로컬 자동 저장** — 입력한 데이터가 브라우저 localStorage에 자동 저장되어 새로고침해도 유지
 
+## 화면 미리보기
+
+| 참여자 등록 | 지출 내역 | 정산 결과 |
+| --- | --- | --- |
+| ![참여자 등록 화면](docs/images/screenshot-participants.png) | ![지출 내역 화면](docs/images/screenshot-expenses.png) | ![정산 결과 화면](docs/images/screenshot-result.png) |
+
 ## 사용 방법
 
 1. **참여자 등록** — 모임 이름(선택)을 입력하고, 참여자 이름을 2명 이상 추가합니다.
