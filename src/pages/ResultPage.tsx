@@ -1,3 +1,4 @@
+import { track } from '@vercel/analytics'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { toast } from 'sonner'
@@ -23,6 +24,7 @@ function ResultPage() {
   /** 이 영역만 PNG로 캡처되어 다운로드된다 */
   const captureRef = useRef<HTMLDivElement>(null)
   const [isDownloading, setIsDownloading] = useState(false)
+  const [hasCheered, setHasCheered] = useState(false)
 
   const isDataInsufficient = participants.length < MIN_PARTICIPANTS_COUNT || expenses.length === 0
 
@@ -48,6 +50,16 @@ function ResultPage() {
     participantNameById.get(participantId) ?? '알 수 없음'
 
   const hasSettlements = settlements.length > 0
+
+  /** 개발자 응원 클릭을 Vercel Analytics 커스텀 이벤트로 기록(세션당 1회) */
+  const handleCheerClick = () => {
+    if (hasCheered) {
+      return
+    }
+    track('cheer_click')
+    setHasCheered(true)
+    toast.success('응원해주셔서 감사해요!')
+  }
 
   /** 정산 결과 캡처 영역을 PNG로 저장 */
   const handleDownloadImage = async () => {
@@ -161,6 +173,14 @@ function ResultPage() {
           <p className="text-center text-xs text-muted-foreground">
             다운로드가 되지 않으면 이미지를 길게 눌러 저장해주세요.
           </p>
+          <button
+            type="button"
+            className="mx-auto text-xs text-muted-foreground underline-offset-2 hover:underline disabled:no-underline"
+            disabled={hasCheered}
+            onClick={handleCheerClick}
+          >
+            {hasCheered ? '응원해주셔서 감사해요' : '🙌 개발자 응원하기'}
+          </button>
         </div>
       </BottomActionBar>
     </div>
