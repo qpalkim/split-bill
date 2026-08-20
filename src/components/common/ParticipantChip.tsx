@@ -13,8 +13,10 @@ interface ParticipantChipProps {
   isDisabled?: boolean
   /** 비활성화 사유 안내 문구(isDisabled가 true일 때만 노출) */
   disabledReason?: string
-  /** 삭제 버튼 클릭 핸들러(isRemovable이 true일 때만 사용) */
+  /** 삭제 버튼 클릭 핸들러(isRemovable이 true이고 isDisabled가 false일 때 호출) */
   onRemove?: () => void
+  /** 비활성화된 삭제 버튼을 탭했을 때 호출(모바일에서는 title 툴팁이 보이지 않아 사유를 알려주기 위함) */
+  onDisabledClick?: () => void
   className?: string
 }
 
@@ -25,6 +27,7 @@ function ParticipantChip({
   isDisabled = false,
   disabledReason,
   onRemove,
+  onDisabledClick,
   className,
 }: ParticipantChipProps) {
   return (
@@ -33,11 +36,14 @@ function ParticipantChip({
       {isRemovable ? (
         <button
           type="button"
-          onClick={onRemove}
-          disabled={isDisabled}
+          onClick={isDisabled ? onDisabledClick : onRemove}
           aria-label={`${name} 삭제`}
+          aria-disabled={isDisabled}
           title={isDisabled ? disabledReason : undefined}
-          className="relative ml-0.5 cursor-pointer rounded-full p-0.5 outline-none after:absolute after:-inset-3 hover:bg-muted-foreground/20 focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent"
+          className={cn(
+            'relative ml-0.5 cursor-pointer rounded-full p-0.5 outline-none after:absolute after:-inset-3 hover:bg-muted-foreground/20 focus-visible:ring-3 focus-visible:ring-ring/50',
+            isDisabled && 'opacity-40 hover:bg-transparent',
+          )}
         >
           <X size={ICON_SIZE_SM} />
         </button>

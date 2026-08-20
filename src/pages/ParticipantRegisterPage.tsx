@@ -1,6 +1,7 @@
 import { Info } from 'lucide-react'
 import { useRef, useState, type KeyboardEvent } from 'react'
 import { useNavigate } from 'react-router'
+import { toast } from 'sonner'
 import BottomActionBar from '@/components/common/BottomActionBar'
 import ConfirmDialog from '@/components/common/ConfirmDialog'
 import EmptyState from '@/components/common/EmptyState'
@@ -184,6 +185,7 @@ function ParticipantRegisterPage() {
                   isDisabled={isReferenced}
                   disabledReason={isReferenced ? PARTICIPANT_REFERENCED_MESSAGE : undefined}
                   onRemove={() => setPendingDeleteParticipant(participant)}
+                  onDisabledClick={() => toast.error(PARTICIPANT_REFERENCED_MESSAGE)}
                 />
               </li>
             )
