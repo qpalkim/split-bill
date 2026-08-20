@@ -8,6 +8,8 @@ import EmptyState from '@/components/common/EmptyState'
 import ParticipantChip from '@/components/common/ParticipantChip'
 import { Button } from '@/components/ui/button'
 import { ICON_SIZE_SM } from '@/constants/icon'
+import { EXPENSE_MAX_COUNT_MESSAGE } from '@/constants/message'
+import { MAX_EXPENSES_COUNT } from '@/constants/validation'
 import { useSessionStore } from '@/store/useSessionStore'
 import type { Expense } from '@/types'
 
@@ -19,6 +21,8 @@ function ExpenseListPage() {
   const removeExpense = useSessionStore((state) => state.removeExpense)
 
   const [pendingDeleteExpense, setPendingDeleteExpense] = useState<Expense | null>(null)
+
+  const isMaxCountReached = expenses.length >= MAX_EXPENSES_COUNT
 
   const totalAmount = useMemo(
     () => expenses.reduce((sum, expense) => sum + expense.amount, 0),
@@ -100,6 +104,10 @@ function ExpenseListPage() {
         </>
       )}
 
+      {isMaxCountReached ? (
+        <p className="text-sm text-muted-foreground">{EXPENSE_MAX_COUNT_MESSAGE}</p>
+      ) : null}
+
       <ConfirmDialog
         isOpen={pendingDeleteExpense !== null}
         onOpenChange={(isOpen) => {
@@ -119,6 +127,7 @@ function ExpenseListPage() {
             type="button"
             variant="outline"
             className="h-10 flex-1"
+            disabled={isMaxCountReached}
             onClick={() => navigate('/expenses/new')}
           >
             지출 추가

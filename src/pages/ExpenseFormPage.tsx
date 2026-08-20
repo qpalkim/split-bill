@@ -16,6 +16,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { EXPENSE_MAX_COUNT_MESSAGE } from '@/constants/message'
+import { MAX_EXPENSES_COUNT } from '@/constants/validation'
 import { useZodForm } from '@/hooks/useZodForm'
 import { formatCurrency } from '@/lib/format'
 import { calculateEqualShares } from '@/lib/split'
@@ -50,6 +52,14 @@ function ExpenseFormPage() {
       navigate('/expenses', { replace: true })
     }
   }, [isEditMode, existingExpense, navigate])
+
+  /** 최대 등록 개수에 도달한 상태로 신규 등록 화면에 직접 진입하면 지출 내역 페이지로 되돌린다 */
+  useEffect(() => {
+    if (!isEditMode && expenses.length >= MAX_EXPENSES_COUNT) {
+      toast.error(EXPENSE_MAX_COUNT_MESSAGE)
+      navigate('/expenses', { replace: true })
+    }
+  }, [isEditMode, expenses.length, navigate])
 
   const form = useZodForm(expenseSchema, {
     defaultValues: {

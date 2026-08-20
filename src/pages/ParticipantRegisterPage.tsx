@@ -7,8 +7,12 @@ import ParticipantChip from '@/components/common/ParticipantChip'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { PARTICIPANT_REFERENCED_MESSAGE } from '@/constants/message'
-import { MIN_PARTICIPANTS_COUNT } from '@/constants/validation'
+import {
+  PARTICIPANT_MAX_COUNT_MESSAGE,
+  PARTICIPANT_NAME_DUPLICATE_MESSAGE,
+  PARTICIPANT_REFERENCED_MESSAGE,
+} from '@/constants/message'
+import { MAX_PARTICIPANTS_COUNT, MIN_PARTICIPANTS_COUNT } from '@/constants/validation'
 import { participantSchema } from '@/lib/validation/participantSchema'
 import { isParticipantReferenced } from '@/store/selectors'
 import { useSessionStore } from '@/store/useSessionStore'
@@ -34,13 +38,29 @@ function ParticipantRegisterPage() {
   const participantNameInputRef = useRef<HTMLInputElement>(null)
 
   const isNextEnabled = participants.length >= MIN_PARTICIPANTS_COUNT
+  const isMaxCountReached = participants.length >= MAX_PARTICIPANTS_COUNT
 
   /** 입력값을 검증해 참여자 명단에 추가 */
   const handleAddParticipant = () => {
+    if (isMaxCountReached) {
+      setErrorMessage(PARTICIPANT_MAX_COUNT_MESSAGE)
+      return
+    }
+
     const result = participantSchema.safeParse({ name: newParticipantName })
 
     if (!result.success) {
       setErrorMessage(result.error.issues[0]?.message ?? '참여자 이름을 확인해주세요.')
+      participantNameInputRef.current?.focus()
+      return
+    }
+
+    const isDuplicateName = participants.some(
+      (participant) => participant.name === result.data.name,
+    )
+
+    if (isDuplicateName) {
+      setErrorMessage(PARTICIPANT_NAME_DUPLICATE_MESSAGE)
       participantNameInputRef.current?.focus()
       return
     }
@@ -92,10 +112,16 @@ function ParticipantRegisterPage() {
             onChange={(event) => setNewParticipantName(event.target.value)}
             onKeyDown={handleNameInputKeyDown}
             placeholder="이름을 입력하고 추가하세요"
+            disabled={isMaxCountReached}
             aria-invalid={errorMessage !== null}
             aria-describedby={errorMessage !== null ? 'participant-name-error' : undefined}
           />
-          <Button type="button" className="h-10" onClick={handleAddParticipant}>
+          <Button
+            type="button"
+            className="h-10"
+            disabled={isMaxCountReached}
+            onClick={handleAddParticipant}
+          >
             추가
           </Button>
         </div>
@@ -138,6 +164,10 @@ function ParticipantRegisterPage() {
         <p className="text-sm text-muted-foreground">
           참여자를 {MIN_PARTICIPANTS_COUNT}명 이상 등록해야 다음 단계로 진행할 수 있어요.
         </p>
+      ) : null}
+
+      {isMaxCountReached ? (
+        <p className="text-sm text-muted-foreground">{PARTICIPANT_MAX_COUNT_MESSAGE}</p>
       ) : null}
 
       <ConfirmDialog
