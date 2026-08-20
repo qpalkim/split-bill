@@ -5,6 +5,15 @@ import BottomActionBar from '@/components/common/BottomActionBar'
 import ConfirmDialog from '@/components/common/ConfirmDialog'
 import EmptyState from '@/components/common/EmptyState'
 import ParticipantChip from '@/components/common/ParticipantChip'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -37,7 +46,7 @@ function ParticipantRegisterPage() {
   const [pendingDeleteParticipant, setPendingDeleteParticipant] = useState<Participant | null>(
     null,
   )
-  const [isGuideOpen, setIsGuideOpen] = useState(false)
+  const [isGuideDialogOpen, setIsGuideDialogOpen] = useState(false)
   const participantNameInputRef = useRef<HTMLInputElement>(null)
 
   const isNextEnabled = participants.length >= MIN_PARTICIPANTS_COUNT
@@ -90,24 +99,29 @@ function ParticipantRegisterPage() {
 
   return (
     <div className="flex flex-col gap-6 px-4 py-4 pb-28">
-      <div>
-        <button
-          type="button"
-          className="flex items-center gap-1 text-xs text-muted-foreground outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
-          aria-expanded={isGuideOpen}
-          aria-controls="storage-guide"
-          onClick={() => setIsGuideOpen((prev) => !prev)}
-        >
-          <Info size={ICON_SIZE_SM} />
-          저장 안내
-        </button>
-        {isGuideOpen ? (
-          <p id="storage-guide" className="mt-1.5 text-xs text-muted-foreground">
-            입력한 정보는 이 브라우저에만 저장돼요. 다른 기기·브라우저와는 공유되지 않으니, 정산이
-            끝나면 결과를 이미지로 저장해두세요.
-          </p>
-        ) : null}
-      </div>
+      <button
+        type="button"
+        className="flex cursor-pointer items-center gap-1 self-start text-xs text-muted-foreground outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+        onClick={() => setIsGuideDialogOpen(true)}
+      >
+        <Info size={ICON_SIZE_SM} />
+        저장 안내
+      </button>
+
+      <AlertDialog open={isGuideDialogOpen} onOpenChange={setIsGuideDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>저장 안내</AlertDialogTitle>
+            <AlertDialogDescription>
+              입력한 정보는 이 브라우저에만 저장돼요. 다른 기기·브라우저와는 공유되지 않으니, 정산이
+              끝나면 결과를 이미지로 저장해두세요.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={() => setIsGuideDialogOpen(false)}>확인</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <div className="space-y-2.5">
         <Label htmlFor="session-name">모임 이름</Label>
