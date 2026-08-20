@@ -462,9 +462,10 @@ split-bill은 인원이 많거나 지출 항목이 복잡해 정산 계산이 �
     2. `src/components/ui/card.tsx`의 `Card`에 명시적 `w-full` 추가 — `flex flex-col` 부모의 `align-items: stretch` 묵시적 동작에 의존하던 너비 계산을 명시적으로 바꿔, WebKit foreignObject의 flex-stretch 레이아웃 버그 가능성을 제거.
   - 데스크톱에서 색상 변경 전후 스크린샷을 비교해 시각적 차이가 없음을 확인(shadcn 기본 neutral 팔레트의 정확한 hex 대응값 사용).
   - 이번에도 해결되지 않으면 `html2canvas-pro`(oklch를 공식 지원하는 non-foreignObject 캡처 라이브러리)로 전환하는 것을 다음 단계로 준비해둠(미구현).
+  - **2차 조치도 실패, 3차 시도는 되돌림**: 사용자가 iOS Safari에서 재검증한 결과 여전히 동일하게 깨짐. `html2canvas-pro`(iframe 복제 + 캔버스 직접 그리기)로 교체하는 3차 조치를 진행했으나, 교체 과정에서 `scale` 옵션이 1보다 크면 카드 배경이 사라지는 라이브러리 자체 버그를 데스크톱에서 발견해 `scale: 1` + 캔버스 업스케일로 우회했음에도, 실기기 재검증 결과 오히려 "더 이상해졌다"는 피드백을 받아 **3차 조치 커밋을 `git revert`로 되돌리고 2차 조치 상태(`modern-screenshot` + oklch→hex + `Card` `w-full`)로 복귀**. 근본 원인은 아직 미해결 상태로 남아있음.
 
   #### 테스트 체크리스트
   - [x] Playwright MCP: 데스크톱 Chromium에서 정산 결과 다운로드가 정상 동작하고, 카드 배경·그림자·폰트가 깨지지 않는지 확인(회귀 검증)
   - [x] Playwright MCP: oklch → hex 전환 전후 스크린샷 비교로 색상 시각적 차이 없음 확인
   - [x] `npm run lint`, `npm run build` 무오류 통과 확인
-  - [ ] 실제 iOS Safari 기기에서 다운로드 이미지의 카드 배경·그림자가 정상 렌더링되는지 재검증 (사용자 확인 필요)
+  - [ ] 실제 iOS Safari 기기에서 다운로드 이미지의 카드 배경·그림자가 정상 렌더링되는지 재검증 — **미해결, 후속 조치 필요**
