@@ -32,7 +32,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - `Expense { id, title, amount, payerId, splitType: 'equal' | 'custom' }`
   - `ExpenseShare { id, expenseId, participantId, amount }`
 - **폼/검증**: React Hook Form 7 + Zod(`zodResolver`).
-- **이미지 생성**: `html-to-image`의 `toPng`로 정산 결과 DOM → PNG 다운로드.
+- **이미지 생성**: `modern-screenshot`의 `domToBlob`으로 정산 결과 DOM → PNG 다운로드(`html-to-image`는 Safari `<foreignObject>` 비호환 문제로 Task 029에서 교체됨).
 - **스타일링/UI**: TailwindCSS v4(설정파일 없는 CSS-in-CSS 방식, `tailwind.config` 없음) + shadcn/ui + Lucide React. **모바일 화면 전용 제작(태블릿/데스크톱 대응 제외), 다크모드 미지원(라이트 모드 전용)** — UI 작업 시 반드시 준수한다.
 - **배포**: Vercel (완전 정적 SPA 빌드, 백엔드 없음).
 

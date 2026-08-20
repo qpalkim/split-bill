@@ -54,7 +54,7 @@
 | 상태/영속화     | Zustand + `persist` 미들웨어 (localStorage) |
 | 폼/검증         | React Hook Form 7, Zod                      |
 | 스타일링/UI     | TailwindCSS v4, shadcn/ui, Lucide React     |
-| 이미지 생성     | html-to-image                               |
+| 이미지 생성     | modern-screenshot                           |
 | 배포            | Vercel (정적 SPA)                           |
 
 ## 💻 로컬 개발

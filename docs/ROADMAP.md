@@ -450,3 +450,14 @@ split-bill은 인원이 많거나 지출 항목이 복잡해 정산 계산이 �
   - [x] Playwright MCP: "저장 안내" 버튼의 `getComputedStyle().cursor`가 `pointer`인지 확인
   - [x] README.md 렌더링 확인: 모든 제목에 이모지가 반영됐는지 확인
   - [x] `npm run lint`, `npm run build` 무오류 통과 확인
+
+- **Task 029: iOS Safari 정산 결과 다운로드 렌더링 깨짐 수정** ✅
+  - 프로덕션 배포 후 사용자가 iOS Safari에서 정산 결과 이미지를 다운로드했더니, 다운로드 자체는 되지만 카드 배경·그림자가 잘려 보이는 등 PC와 다르게 CSS가 깨지는 문제를 실제 캡처 이미지로 확인.
+  - 원인: `html-to-image`는 SVG `<foreignObject>` 기반으로 DOM을 캡처하는데, Safari의 `<foreignObject>` 보안 모델·렌더링 방식과 호환되지 않는 게 해당 라이브러리의 알려진 한계(공식적으로 "Safari 미지원"으로 문서화됨) — WebSearch로 확인.
+  - 조치: `html-to-image`를 제거하고, 동일한 API 계열이면서 Safari 호환성을 명시적으로 다루는 유지보수 포크 `modern-screenshot`(`domToBlob`)으로 교체(`src/lib/image.ts`). 폰트 임베딩이 기본 옵션으로 자동 처리돼 기존의 수동 `getFontEmbedCSS` 호출도 제거됨. `pixelRatio` → `scale`, `cacheBust` → `fetch.bypassingCache`로 옵션명만 매핑, iOS 분기(Web Share API)·데스크톱 폴백(앵커 다운로드) 로직은 변경 없음.
+  - Playwright(Chromium)는 실제 Safari WebKit의 `<foreignObject>` 렌더링 경로를 재현하지 못해 이 수정은 실기기 재검증이 필요 — 데스크톱에서 다운로드·화질·폰트 임베딩 회귀 여부만 확인.
+
+  #### 테스트 체크리스트
+  - [x] Playwright MCP: 데스크톱 Chromium에서 정산 결과 다운로드가 정상 동작하고, 카드 배경·그림자·폰트가 깨지지 않는지 확인(회귀 검증)
+  - [x] `npm run lint`, `npm run build` 무오류 통과 확인
+  - [ ] 실제 iOS Safari 기기에서 다운로드 이미지의 카드 배경·그림자가 정상 렌더링되는지 재검증 (사용자 확인 필요)
