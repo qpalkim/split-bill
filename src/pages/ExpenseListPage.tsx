@@ -1,4 +1,4 @@
-import { Trash2 } from 'lucide-react'
+import { Trash2, UserPlus } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router'
 import AmountText from '@/components/common/AmountText'
@@ -47,7 +47,17 @@ function ExpenseListPage() {
   return (
     <div className="flex flex-col gap-6 px-4 py-4 pb-28">
       <div className="space-y-1.5">
-        <p className="text-sm font-semibold text-foreground">참여자 {participants.length}명</p>
+        <div className="flex items-center justify-between">
+          <p className="text-sm font-semibold text-foreground">참여자 {participants.length}명</p>
+          <button
+            type="button"
+            className="flex cursor-pointer items-center gap-1 text-xs text-muted-foreground outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+            onClick={() => navigate('/')}
+          >
+            <UserPlus size={ICON_SIZE_SM} />
+            참여자 수정하기
+          </button>
+        </div>
         <ul className="flex flex-wrap gap-2">
           {participants.map((participant) => (
             <li key={participant.id}>
