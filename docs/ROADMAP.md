@@ -462,16 +462,9 @@ split-bill은 인원이 많거나 지출 항목이 복잡해 정산 계산이 �
     2. `src/components/ui/card.tsx`의 `Card`에 명시적 `w-full` 추가 — `flex flex-col` 부모의 `align-items: stretch` 묵시적 동작에 의존하던 너비 계산을 명시적으로 바꿔, WebKit foreignObject의 flex-stretch 레이아웃 버그 가능성을 제거.
   - 데스크톱에서 색상 변경 전후 스크린샷을 비교해 시각적 차이가 없음을 확인(shadcn 기본 neutral 팔레트의 정확한 hex 대응값 사용).
   - 이번에도 해결되지 않으면 `html2canvas-pro`(oklch를 공식 지원하는 non-foreignObject 캡처 라이브러리)로 전환하는 것을 다음 단계로 준비해둠(미구현).
-  - **2차 조치도 실패**: 사용자가 iOS Safari에서 재검증한 결과 여전히 동일하게 깨짐. 사용자에게 정확히 확인한 결과 결정적 진단 확보 — **다운로드 전 라이브 `/result` 페이지 자체는 정상**이고 **다운로드된 PNG만 깨짐**(Safari 직접 실행, 인앱 브라우저 아님). 즉 실제 CSS 렌더링은 문제없고, DOM을 이미지로 "캡처"하는 단계에서만 발생 — `html-to-image`/`modern-screenshot`이 공유하는 SVG `<foreignObject>` 래스터화 자체가 원인이라는 결론.
-  - **3차 조치**: `<foreignObject>`를 전혀 쓰지 않는 `html2canvas-pro`(DOM을 숨겨진 iframe으로 복제해 캔버스에 요소 단위로 직접 그림)로 교체(`src/lib/image.ts`).
-    - 교체 직후 **데스크톱 Chromium에서도** 카드 배경·그림자가 완전히 사라지는 새 회귀를 발견 — iOS 실기기 없이 로컬에서 바로 재현 가능한 버그라 Playwright `browser_evaluate`로 직접 디버깅. `overflow-hidden`/`box-shadow`/`border-radius`를 하나씩 제거해봐도 재현되고, 단순한 `<div>`(배경색만 있는)는 `scale: 2`에서도 정상 캡처되는 것으로 보아 **html2canvas-pro의 `scale` 옵션을 1보다 크게 주면 이 앱의 카드처럼 중첩된 flex + CSS 커스텀 프로퍼티 패딩(`py-(--card-spacing)`) 조합에서 배경·그림자가 통째로 사라지는 자체 버그**로 결론(iOS와 무관, 라이브러리 자체 결함).
-    - `scale: 1`로 캡처하면 정상 렌더링됨을 확인. 다만 해상도가 358×460px 수준으로 낮아져, 캡처 후 별도 `<canvas>`로 2배(`UPSCALE_FACTOR`) 업스케일(`imageSmoothingQuality: 'high'`)해 파일 해상도를 716×920px로 보완.
-  - `docs/PRD.md`나 `README.md`의 캡처 라이브러리 언급은 아직 없어 별도 갱신 불필요.
 
   #### 테스트 체크리스트
   - [x] Playwright MCP: 데스크톱 Chromium에서 정산 결과 다운로드가 정상 동작하고, 카드 배경·그림자·폰트가 깨지지 않는지 확인(회귀 검증)
   - [x] Playwright MCP: oklch → hex 전환 전후 스크린샷 비교로 색상 시각적 차이 없음 확인
-  - [x] Playwright MCP `browser_evaluate`로 html2canvas-pro의 `scale` 옵션별(1/1.5/2) 캡처 결과를 직접 비교해 `scale > 1`에서만 카드 배경이 사라짐을 확인(디버깅)
-  - [x] Playwright MCP: `scale: 1` + 캔버스 업스케일 적용 후 실제 다운로드 버튼으로 카드 배경·그림자 정상 렌더링, 파일 해상도 716×920px 확인
   - [x] `npm run lint`, `npm run build` 무오류 통과 확인
   - [ ] 실제 iOS Safari 기기에서 다운로드 이미지의 카드 배경·그림자가 정상 렌더링되는지 재검증 (사용자 확인 필요)
